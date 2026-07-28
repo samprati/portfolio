@@ -8,6 +8,17 @@ import {
   ARRIVAL,
 } from '../data/timeline.js'
 import useIsMobile from '../hooks/useIsMobile.js'
+import PassCard, { pp } from './PassCard.jsx'
+
+// placement + content styles for the boarding / arrival passes
+const hudCard = { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', transition: 'opacity 0.5s ease' }
+const route = { display: 'flex', justifyContent: 'center', alignItems: 'flex-start', gap: 26, margin: '4px 0 18px' }
+const routeItem = { position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }
+const routeCode = { fontFamily: "'SF Mono', ui-monospace, monospace", fontSize: 28, fontWeight: 700, color: '#0b5fb8', letterSpacing: 1 }
+const routeCity = { fontSize: 10.5, letterSpacing: 1.2, color: '#6a7788', textTransform: 'uppercase' }
+const routeArrow = { position: 'absolute', right: -19, top: 8, color: '#0b5fb8', fontSize: 13 }
+const tagline = { fontSize: 16, fontStyle: 'italic', color: '#39485a', lineHeight: 1.5, textAlign: 'center' }
+const arriveContact = { display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 12, fontSize: 17 }
 
 // --- tuning ---------------------------------------------------------------
 const FEET_PER_UNIT = 640 // world Y units → altitude in feet (cruise ≈ 33k ft)
@@ -147,42 +158,73 @@ export default function FlightHUD({ progressRef }) {
 
   return (
     <div style={s.wrap}>
-      {/* BOARDING card — on the departure runway, before takeoff */}
-      <div ref={boardingRef} style={{ ...s.boardingCard, ...(isMobile ? s.cardMobile : null) }}>
-        <div style={s.passTop}>
-          <span>BOARDING PASS</span>
-          <span style={s.passFlight}>FLIGHT {BOARDING.flight}</span>
-        </div>
-        <div style={s.passName}>{BOARDING.name}</div>
-        <div style={s.passRole}>{BOARDING.role}</div>
-        <div style={s.route}>
+      {/* BOARDING pass — on the departure runway, before takeoff */}
+      <PassCard
+        ref={boardingRef}
+        style={{ ...hudCard, opacity: 1, width: isMobile ? '92vw' : 'min(680px, 92vw)' }}
+        header={
+          <>
+            <div style={pp.kickerRow}>
+              <span style={pp.tag}>BOARDING PASS</span>
+              <span>FLIGHT {BOARDING.flight}</span>
+            </div>
+            <div style={{ ...pp.headTitle, fontSize: isMobile ? 40 : 56 }}>{BOARDING.name}</div>
+            <div style={pp.headSub}>{BOARDING.role}</div>
+          </>
+        }
+        stub={
+          <>
+            <div style={pp.barcode} />
+            <div style={pp.stubMeta}>
+              SEAT 1A · GATE 26
+              <br />
+              {BOARDING.flight}
+            </div>
+          </>
+        }
+      >
+        <div style={route}>
           {BOARDING.route.map((r, i) => (
-            <div key={r.code} style={s.routeItem}>
-              <span style={s.routeCode}>{r.code}</span>
-              <span style={s.routeCity}>{r.city}</span>
-              {i < BOARDING.route.length - 1 && <span style={s.routeArrow}>✈</span>}
+            <div key={r.code} style={routeItem}>
+              <span style={routeCode}>{r.code}</span>
+              <span style={routeCity}>{r.city}</span>
+              {i < BOARDING.route.length - 1 && <span style={routeArrow}>✈</span>}
             </div>
           ))}
         </div>
-        <div style={s.passTagline}>{BOARDING.tagline}</div>
-      </div>
+        <div style={tagline}>{BOARDING.tagline}</div>
+      </PassCard>
 
-      {/* ARRIVAL card — on the arrival runway, after landing */}
-      <div ref={arrivalRef} style={{ ...s.arrivalCard, ...(isMobile ? s.cardMobile : null) }}>
-        <div style={s.arriveSub}>{ARRIVAL.sub}</div>
-        <div style={s.arriveTitle}>{ARRIVAL.title}</div>
-        <div style={s.arriveNote}>{ARRIVAL.note}</div>
-        <div style={s.arriveContact}>
-          <a href={`mailto:${ARRIVAL.email}`} style={s.link}>{ARRIVAL.email}</a>
-          <span style={s.dot}>·</span>
-          <a href={`tel:${ARRIVAL.phone.replace(/\s/g, '')}`} style={s.link}>{ARRIVAL.phone}</a>
+      {/* ARRIVAL pass — on the arrival runway, after landing */}
+      <PassCard
+        ref={arrivalRef}
+        style={{ ...hudCard, opacity: 0, width: isMobile ? '92vw' : 'min(640px, 92vw)' }}
+        header={
+          <>
+            <div style={pp.kickerRow}>
+              <span style={pp.tag}>ARRIVAL</span>
+              <span>{ARRIVAL.sub}</span>
+            </div>
+            <div style={{ ...pp.headTitle, fontSize: isMobile ? 36 : 50 }}>{ARRIVAL.title}</div>
+            <div style={pp.headSub}>{ARRIVAL.note}</div>
+          </>
+        }
+        stub={
+          <>
+            <div style={pp.barcode} />
+            <div style={pp.stubMeta}>{ARRIVAL.visa}</div>
+          </>
+        }
+      >
+        <div style={arriveContact}>
+          <a href={`mailto:${ARRIVAL.email}`} style={pp.link}>{ARRIVAL.email}</a>
+          <span style={{ color: '#9aa7b6' }}>·</span>
+          <a href={`tel:${ARRIVAL.phone.replace(/\s/g, '')}`} style={pp.link}>{ARRIVAL.phone}</a>
         </div>
-        <a href={`https://${ARRIVAL.linkedin}`} target="_blank" rel="noreferrer" style={{ ...s.link, ...s.linkedin }}>
+        <a href={`https://${ARRIVAL.linkedin}`} target="_blank" rel="noreferrer" style={{ ...pp.link, display: 'inline-block', marginTop: 12 }}>
           {ARRIVAL.linkedin}
         </a>
-        <div style={s.visa}>{ARRIVAL.visa}</div>
-        <div style={s.arriveName}>{ARRIVAL.name}</div>
-      </div>
+      </PassCard>
 
       {/* top bar */}
       <div style={s.topRow}>
