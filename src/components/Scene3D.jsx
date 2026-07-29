@@ -8,6 +8,8 @@ import Runway from './Runway.jsx'
 import Airports from './Airport.jsx'
 import City from './City.jsx'
 import Trees from './Trees.jsx'
+import Grass from './Grass.jsx'
+import ErrorBoundary from './ErrorBoundary.jsx'
 
 // deeper blue up high, fading to a bright hazy band at the cloud horizon
 const SKY = '#2f7fd0'
@@ -34,11 +36,19 @@ export default function Scene3D({ progressRef }) {
       <directionalLight position={[10, -30, 20]} intensity={0.35} color="#bcd8f5" />
 
       <Runway />
-      <City />
-      <Trees />
       <Airports />
 
       <Suspense fallback={null}>
+        {/* a model load failure degrades to missing scenery, never a blank app */}
+        <ErrorBoundary>
+          <City />
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <Trees />
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <Grass />
+        </ErrorBoundary>
         <CloudTunnel />
       </Suspense>
 

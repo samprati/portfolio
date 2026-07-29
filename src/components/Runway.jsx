@@ -50,9 +50,9 @@ export default function Runway() {
         receiveShadow
       >
         <planeGeometry args={[600, groundLength]} />
-        {/* green countryside around the airfield; from cruise it reads as
-            distant land glimpsed below the cloud sea */}
-        <meshStandardMaterial color="#7d9a63" roughness={1} metalness={0} />
+        {/* earthy base under the 3D grass; the grass patches provide the green,
+            and gaps read as soil rather than a flat green field */}
+        <meshStandardMaterial color="#8f9068" roughness={1} metalness={0} />
       </mesh>
 
       {/* departure runway (under the takeoff) */}
