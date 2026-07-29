@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 export default function LoadingScreen({ onDone }) {
   const [progress, setProgress] = useState(0)
+  const [ready, setReady] = useState(false)
   const dotRef = useRef(null)
 
   useEffect(() => {
@@ -19,19 +20,26 @@ export default function LoadingScreen({ onDone }) {
       if (t < 1) {
         raf = requestAnimationFrame(tick)
       } else {
-        setTimeout(onDone, 350)
+        // wait for a click — that gesture also unlocks audio for the session
+        setReady(true)
       }
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [onDone])
+  }, [])
 
   return (
-    <div style={styles.wrap}>
+    <div style={{ ...styles.wrap, cursor: ready ? 'pointer' : 'default' }} onClick={ready ? onDone : undefined}>
       <div style={styles.trail} />
       <div ref={dotRef} style={styles.dot} />
+      {ready && (
+        <div style={styles.cta}>
+          <span style={styles.ctaText}>CLICK TO TAKE OFF</span>
+          <span style={styles.ctaSub}>▸ then scroll to fly</span>
+        </div>
+      )}
       <div style={styles.footer}>
-        <span style={styles.label}>TAKING FLIGHT</span>
+        <span style={styles.label}>{ready ? 'READY FOR DEPARTURE' : 'TAKING FLIGHT'}</span>
         <span style={styles.percent}>{progress}%</span>
       </div>
     </div>
@@ -85,5 +93,31 @@ const styles = {
   percent: {
     fontVariantNumeric: 'tabular-nums',
     color: '#f4f2ee',
+  },
+  cta: {
+    position: 'absolute',
+    inset: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    color: '#f4f2ee',
+    fontFamily: "'Bricolage Grotesque', sans-serif",
+  },
+  ctaText: {
+    fontSize: 'clamp(22px, 4vw, 34px)',
+    fontWeight: 800,
+    letterSpacing: 2,
+    padding: '14px 30px',
+    border: '1.5px solid rgba(244,242,238,0.5)',
+    borderRadius: 12,
+    background: 'rgba(255,255,255,0.04)',
+  },
+  ctaSub: {
+    fontFamily: "'SF Mono', ui-monospace, monospace",
+    fontSize: 12,
+    letterSpacing: 2,
+    color: 'rgba(244,242,238,0.65)',
   },
 }

@@ -3,6 +3,8 @@ import gsap from 'gsap'
 import LoadingScreen from './components/LoadingScreen.jsx'
 import Scene3D from './components/Scene3D.jsx'
 import FlightHUD from './components/FlightHUD.jsx'
+import NavInstruments from './components/NavInstruments.jsx'
+import FlightAudio from './components/FlightAudio.jsx'
 import { FLIGHT_PATH, CONTENT_PROGRESS } from './data/timeline.js'
 
 const FLIGHT_LENGTH_VH = 1040 // scrollable height (cruise portion), in viewport-heights
@@ -138,7 +140,9 @@ function App() {
       {loaded && (
         <>
           <Scene3D progressRef={progressRef} />
+          <NavInstruments progressRef={progressRef} />
           <FlightHUD progressRef={progressRef} />
+          <FlightAudio progressRef={progressRef} />
           {/* invisible spacer that gives the page real scrollable height for
               the cruise portion of the flight */}
           <div ref={spacerRef} style={{ height: `${FLIGHT_LENGTH_VH}vh` }} />
