@@ -9,6 +9,7 @@ import Airports from './Airport.jsx'
 import City from './City.jsx'
 import Trees from './Trees.jsx'
 import Grass from './Grass.jsx'
+import SkyType from './SkyType.jsx'
 import ErrorBoundary from './ErrorBoundary.jsx'
 
 // deeper blue up high, fading to a bright hazy band at the cloud horizon
@@ -49,6 +50,7 @@ export default function Scene3D({ progressRef }) {
         <ErrorBoundary>
           <Grass />
         </ErrorBoundary>
+        <SkyType />
         <CloudTunnel />
       </Suspense>
 

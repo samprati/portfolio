@@ -11,75 +11,110 @@ export const GROUND_Y = 0 // runway surface
 export const CLOUD_DECK_Y = 30 // middle of the cloud layer you climb through
 export const CRUISE_Y = 54 // high above the deck — the "sea of clouds" cruise
 
-// The in-cloud sections — one per career leg, shown while cruising as story
-// cards that fade in and out with the flight. `pos`/`look` still fly the
-// camera; the rest is content for the card. The "boarding" and "arrival"
-// sections live on the runway instead (see BOARDING / ARRIVAL below).
+// The cruise sections, shown as floating 3D typography as the camera flies
+// through each cluster. A proper portfolio arc: philosophy → experience →
+// education → skills → achievements. `pos`/`look` fly the camera; `no`/`hero`/
+// `title`/`kicker`/`quote` drive the typography. Boarding & arrival live on the
+// runway instead (see BOARDING / ARRIVAL below).
+//
+// `label` is the HUD section name; `hero` is the big outlined word/years;
+// `kicker` is the small tracked label; `quote` is the floating body line.
 export const TIMELINE = [
   {
-    key: 'origin',
-    label: 'KUALA LUMPUR',
-    pos: [4, 54, -30],
-    look: [4, 53.7, -60],
+    key: 'philosophy',
+    label: 'PHILOSOPHY',
+    pos: [0, 52, -26],
+    look: [1, 53.6, -56],
     no: '01',
-    code: 'KUL · Kuala Lumpur',
-    years: '2012 — 2017',
+    hero: 'CALM',
+    title: 'How I work',
+    kicker: 'PHILOSOPHY',
+    quote:
+      'Design-systems-first and mildly obsessed with reuse — build the component once, use it everywhere. I bring 3–4 directions instead of one "final" answer, and I speak to engineers in their own language.',
+  },
+  {
+    key: 'kl',
+    label: 'KUALA LUMPUR',
+    pos: [4, 54, -56],
+    look: [4, 53.7, -86],
+    no: '02',
+    hero: '2012 — 2017',
     title: 'Where it started',
-    story:
-      'Three roles, one city. I went from drawing interfaces and wiring up the systems behind them to owning product design end to end — across the Centre of Technology & Innovation, Optimizer HQ and Wiedu. This is where I learned the thing I still believe: the fastest way to make software feel calm is to design the component once and reuse it everywhere.',
-    chips: ['−25% support tickets', '+20% satisfaction', 'First design guidelines'],
+    kicker: 'EXPERIENCE · KUALA LUMPUR',
+    quote:
+      'From UI and systems work to owning product design across KL — CTI, Optimizer HQ and Wiedu. Cut support tickets 25% and wrote the first design guidelines.',
   },
   {
     key: 'servedeck',
     label: 'SERVEDECK',
-    pos: [-4, 56, -62],
-    look: [-4, 55.6, -92],
-    no: '02',
-    code: 'KUL · Mandrill Tech',
-    years: '2017 — 2020',
+    pos: [-4, 56, -86],
+    look: [-4, 55.6, -116],
+    no: '03',
+    hero: '2017 — 2020',
     title: 'ServeDeck',
-    story:
-      'Senior UI Designer on a smart facility-operations platform, spanning web and mobile. My job was to take dense operational data — work orders, assets, schedules — and turn it into layouts a facility team could read and act on in seconds, not minutes.',
-    chips: ['+15% app downloads', '+10% satisfaction', 'Web + mobile system'],
+    kicker: 'EXPERIENCE · MANDRILL TECH',
+    quote:
+      'Senior UI Designer on a smart facility-operations platform, web and mobile. Dense operational data turned into layouts a team can read in seconds. +15% downloads.',
   },
   {
     key: 'teleport',
     label: 'TELEPORT',
-    pos: [3, 57, -94],
-    look: [3, 56.6, -124],
-    no: '03',
-    code: 'KUL · AirAsia Group',
-    years: '2020 — 2021',
+    pos: [3, 57, -116],
+    look: [3, 56.6, -146],
+    no: '04',
+    hero: '2020 — 2021',
     title: 'Teleport App',
-    story:
-      "Product Designer for AirAsia's logistics arm, mid-pandemic, while the business scaled fast. I mapped the whole order journey end to end, found exactly where people were dropping off, and rebuilt those screens first — inside a shared design-system framework so the team could move quicker.",
-    chips: ['−30% drop-off', '+25% efficiency', '−20% mockup time'],
+    kicker: 'EXPERIENCE · AIRASIA GROUP',
+    quote:
+      "Product Designer for AirAsia's logistics arm, mid-pandemic. Mapped the order journey end to end and rebuilt the drop-off points first — drop-off down 30%.",
   },
   {
     key: 'hitachi',
     label: 'HITACHI VANTARA',
-    pos: [-3, 54, -126],
-    look: [-3, 53.6, -156],
-    no: '04',
-    code: 'HYD · Hitachi Vantara',
-    years: '2021 — Now',
+    pos: [-3, 54, -146],
+    look: [-3, 53.6, -176],
+    no: '05',
+    hero: '2021 — NOW',
     title: 'Lead Product Designer',
-    story:
-      "Senior UX Designer to Team Lead of five, shaping five presales engineering tools used by Hitachi's sales engineers worldwide. I built the shared design system that ties them together — build once, use everywhere — and set the review rhythm that keeps the quality bar even across the whole portfolio.",
-    chips: ['−35% UI inconsistency', '+20% web conversion', 'Platinum Award'],
+    kicker: 'EXPERIENCE · HITACHI VANTARA',
+    quote:
+      'Senior UX to Team Lead of five, shaping five presales tools worldwide. Built the shared design system that ties them together — UI inconsistency down 35%.',
+  },
+  {
+    key: 'education',
+    label: 'EDUCATION',
+    pos: [3, 55, -176],
+    look: [3, 54.7, -206],
+    no: '06',
+    hero: 'MSc',
+    title: 'Software Engineering',
+    kicker: 'EDUCATION · 2009 — 2016',
+    quote:
+      'MSc Computer Software Engineering — Staffordshire University, UK. BSc (Hons) Computer Games Development — Asia Pacific University, Malaysia. A build-first foundation under the design.',
   },
   {
     key: 'skills',
-    label: 'FLIGHT DECK',
-    pos: [3, 55, -158],
-    look: [3, 54.7, -188],
-    no: '05',
-    code: 'The toolkit',
-    years: '12+ years',
+    label: 'SKILLS',
+    pos: [-3, 56, -206],
+    look: [-3, 55.6, -236],
+    no: '07',
+    hero: 'TOOLKIT',
     title: 'On the flight deck',
-    story:
-      'Twelve years of instruments: design systems and component libraries, enterprise UX and B2B SaaS, research and prototyping — plus enough HTML, SCSS and JavaScript to talk to engineers in their own language and protect the design through to the last pixel that ships.',
-    chips: ['Design systems', 'Enterprise UX', 'Figma', 'Prototyping', 'HTML · SCSS · JS', 'WCAG 2.2', 'Team leadership'],
+    kicker: 'SKILLS · THE TOOLKIT',
+    quote:
+      'Design systems & component libraries · enterprise UX and B2B SaaS · Figma, prototyping, research · HTML · SCSS · JavaScript · WCAG 2.2 · leading and mentoring designers.',
+  },
+  {
+    key: 'achievements',
+    label: 'ACHIEVEMENTS',
+    pos: [2, 54, -236],
+    look: [2, 53.7, -266],
+    no: '08',
+    hero: 'PLATINUM',
+    title: 'Kaitakusha Seishin',
+    kicker: 'ACHIEVEMENTS · HITACHI AWARD',
+    quote:
+      "Hitachi's Platinum Award for outstanding contribution to large-scale web UX. A design system that cut inconsistency 35% and lifted conversion 20%; Teleport drop-off down 30%.",
   },
 ]
 
@@ -114,8 +149,8 @@ export const ARRIVAL = {
 const ROLL = { pos: [0, 1.5, 66], look: [0, 2.6, 40] } // accelerating down the runway, near level
 const TAKEOFF = { pos: [0, 1.7, 46], look: [0, 11, 12] } // rotation — nose lifts off
 const CLIMB = { pos: [0, 26, 24], look: [0, 45, -2] } // steep climb up through the deck
-const FLARE = { pos: [0, 22, -220], look: [0, 5, -246] } // descending back down through the deck
-const LANDING = { pos: [0, 1.3, -246], look: [0, -1.4, -274] } // flaring onto the arrival runway
+const FLARE = { pos: [0, 22, -268], look: [0, 5, -294] } // descending back down through the deck
+const LANDING = { pos: [0, 1.3, -294], look: [0, -1.4, -322] } // flaring onto the arrival runway
 
 const LEAD = [ROLL, TAKEOFF, CLIMB]
 const TAIL = [FLARE, LANDING]
@@ -135,8 +170,8 @@ export const CONTENT_PROGRESS = TIMELINE.map(
 
 // Airport / runway anchor points, shared by the runway, airport and scenery.
 export const DEPARTURE_Z = 50 // departure airport centre
-export const ARRIVAL_Z = -246 // arrival airport centre
+export const ARRIVAL_Z = -292 // arrival airport centre
 
 // Z extent of the world, used to scatter clouds and lay the ground.
 export const ROAD_START_Z = 72
-export const ROAD_END_Z = -284
+export const ROAD_END_Z = -336

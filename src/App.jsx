@@ -3,10 +3,9 @@ import gsap from 'gsap'
 import LoadingScreen from './components/LoadingScreen.jsx'
 import Scene3D from './components/Scene3D.jsx'
 import FlightHUD from './components/FlightHUD.jsx'
-import StoryCards from './components/StoryCards.jsx'
 import { FLIGHT_PATH, CONTENT_PROGRESS } from './data/timeline.js'
 
-const FLIGHT_LENGTH_VH = 760 // scrollable height (cruise portion), in viewport-heights
+const FLIGHT_LENGTH_VH = 1040 // scrollable height (cruise portion), in viewport-heights
 
 // The takeoff and landing both fly themselves. Scroll only ever drives the
 // cruise between them:
@@ -139,7 +138,6 @@ function App() {
       {loaded && (
         <>
           <Scene3D progressRef={progressRef} />
-          <StoryCards progressRef={progressRef} />
           <FlightHUD progressRef={progressRef} />
           {/* invisible spacer that gives the page real scrollable height for
               the cruise portion of the flight */}
