@@ -5,26 +5,26 @@ import Scene3D from './components/Scene3D.jsx'
 import FlightHUD from './components/FlightHUD.jsx'
 import NavInstruments from './components/NavInstruments.jsx'
 import FlightAudio from './components/FlightAudio.jsx'
-import { FLIGHT_PATH, CONTENT_PROGRESS } from './data/timeline.js'
+import { FLIGHT_PATH, CONTENT_PROGRESS, TIMELINE } from './data/timeline.js'
 
-const FLIGHT_LENGTH_VH = 1040 // scrollable height (cruise portion), in viewport-heights
-
-// The takeoff and landing both fly themselves. Scroll only ever drives the
-// cruise between them:
-//   • parked on the runway → first scroll auto-flies takeoff up to the intro
-//   • scroll cruises intro → contact
-//   • at the last section, scrolling further auto-flies the descent + landing
-//     (scroll back up to take off again)
+// Leg-snapped flight: takeoff and landing fly themselves; in between, each
+// scroll/swipe auto-flies to the next or previous leg. Scrolling BACK plays a
+// left-banking turn, as if the plane loops around to revisit the leg.
 const SEG = FLIGHT_PATH.length - 1
-const INTRO_T = CONTENT_PROGRESS[0] // top of the climb (intro section)
-const END_T = CONTENT_PROGRESS[CONTENT_PROGRESS.length - 1] // last section (contact)
-const ROTATE_T = 1 / SEG // end of the ground roll
-const FLARE_T = (SEG - 1) / SEG // start of the landing flare
+const N = CONTENT_PROGRESS.length
+const INTRO_T = CONTENT_PROGRESS[0]
+const END_T = CONTENT_PROGRESS[N - 1]
+const ROTATE_T = 1 / SEG
+const FLARE_T = (SEG - 1) / SEG
 
 function App() {
   const [loaded, setLoaded] = useState(false)
   const progressRef = useRef(0)
-  const spacerRef = useRef(null)
+  // scripted reverse maneuver: { active, id, from:[x,y,z], to:[x,y,z], phase }
+  const maneuverRef = useRef({ active: false, id: 0, from: [0, 0, 0], to: [0, 0, 0], phase: 0 })
+  // { moving, turn, label } — drives the "turning to leg —" note in the HUD
+  const navRef = useRef({ moving: false, turn: false, label: '' })
+  const restartRef = useRef(null)
 
   const handleLoaded = useCallback(() => setLoaded(true), [])
 
@@ -33,91 +33,128 @@ function App() {
 
     const doc = document.documentElement
     let phase = 'ground' // ground → takeoff → flight → landing → landed
-    let tl // current auto-animation timeline
-    const p = { v: 0 } // shared tween target
+    let legIndex = 0
+    let busy = false
+    let tl
+    const p = { v: 0, turn: 0 }
 
     progressRef.current = 0
-    doc.style.overflow = 'hidden'
+    doc.style.overflow = 'hidden' // sections model — nav by wheel / key / swipe
     window.scrollTo(0, 0)
 
-    const lock = () => (doc.style.overflow = 'hidden')
-    const unlock = () => (doc.style.overflow = '')
     const setP = () => (progressRef.current = p.v)
-    const atBottom = () => {
-      const max = doc.scrollHeight - window.innerHeight
-      return max <= 0 || window.scrollY >= max - 2
-    }
-
-    // cruise: native scroll (0..1) maps to INTRO_T..END_T. The runway, takeoff
-    // and landing stretches are never scrubbed by hand.
-    function onScroll() {
-      if (phase !== 'flight') return
-      const max = doc.scrollHeight - window.innerHeight
-      const frac = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0
-      progressRef.current = INTRO_T + frac * (END_T - INTRO_T)
-    }
-
-    const enterFlight = (toBottom) => {
-      phase = 'flight'
-      unlock()
-      const max = doc.scrollHeight - window.innerHeight
-      window.scrollTo(0, toBottom ? max : 0)
-      onScroll()
-    }
 
     const startTakeoff = () => {
       if (phase !== 'ground') return
       phase = 'takeoff'
+      busy = true
       p.v = 0
-      tl = gsap.timeline({ onComplete: () => enterFlight(false) })
+      tl = gsap.timeline({ onComplete: () => { phase = 'flight'; legIndex = 0; busy = false } })
       tl.to(p, { v: ROTATE_T, duration: 1.6, ease: 'power1.in', onUpdate: setP }) // ground roll
         .to(p, { v: INTRO_T, duration: 3.4, ease: 'power2.out', onUpdate: setP }) // rotate + climb
     }
 
-    const startLanding = () => {
-      if (phase !== 'flight') return
+    // fly to leg i. Forward = a straight glide. Reverse = a cinematic first-
+    // person LEFT U-TURN: the camera flies its own looping maneuver curve back
+    // onto the previous leg (see CameraFlight for the actual path/banking).
+    const goToLeg = (i, reverse) => {
+      if (busy || i < 0 || i > N - 1) return
+      busy = true
+      navRef.current = { moving: true, turn: reverse, label: TIMELINE[i].label }
       tl?.kill()
-      phase = 'landing'
-      lock()
-      p.v = progressRef.current
-      tl = gsap.timeline({ onComplete: () => (phase = 'landed') })
-      tl.to(p, { v: FLARE_T, duration: 3.0, ease: 'power1.in', onUpdate: setP }) // descend through deck
-        .to(p, { v: 1, duration: 2.0, ease: 'power2.out', onUpdate: setP }) // flare + touchdown
+      if (reverse) {
+        const fromP = CONTENT_PROGRESS[legIndex]
+        const toP = CONTENT_PROGRESS[i]
+        const m = maneuverRef.current
+        m.active = true
+        m.id += 1
+        m.from = TIMELINE[legIndex].pos
+        m.to = TIMELINE[i].pos
+        m.toLook = TIMELINE[i].look // so the turn lines up with the leg's own view
+        m.phase = 0
+        const o = { ph: 0 }
+        tl = gsap.timeline({
+          onComplete: () => { m.active = false; progressRef.current = toP; legIndex = i; busy = false; navRef.current.moving = false },
+        })
+        tl.to(o, {
+          ph: 1,
+          duration: 4.6,
+          ease: 'sine.inOut',
+          onUpdate: () => { m.phase = o.ph; progressRef.current = fromP + (toP - fromP) * o.ph },
+        })
+      } else {
+        p.v = progressRef.current
+        tl = gsap.timeline({ onComplete: () => { legIndex = i; busy = false; navRef.current.moving = false } })
+        tl.to(p, { v: CONTENT_PROGRESS[i], duration: 2.1, ease: 'sine.inOut', onUpdate: setP })
+      }
     }
 
-    // scrolling up after (or during) the landing takes off again
+    const startLanding = () => {
+      if (phase !== 'flight') return
+      phase = 'landing'
+      busy = true
+      tl?.kill()
+      p.v = progressRef.current
+      tl = gsap.timeline({ onComplete: () => { phase = 'landed'; busy = false } })
+      tl.to(p, { v: FLARE_T, duration: 3.0, ease: 'power1.in', onUpdate: setP })
+        .to(p, { v: 1, duration: 2.0, ease: 'power2.out', onUpdate: setP })
+    }
+
+    // climb back up onto the last leg from the landing
     const reverseLanding = () => {
       if (phase !== 'landing' && phase !== 'landed') return
-      tl?.kill()
       phase = 'reversing'
+      busy = true
+      tl?.kill()
       p.v = progressRef.current
-      tl = gsap.timeline({ onComplete: () => enterFlight(true) })
-      tl.to(p, { v: END_T, duration: 2.2, ease: 'power2.out', onUpdate: setP })
+      tl = gsap.timeline({ onComplete: () => { phase = 'flight'; legIndex = N - 1; busy = false } })
+      tl.to(p, { v: END_T, duration: 2.4, ease: 'power2.out', onUpdate: setP })
+    }
+
+    // "fly again" — reset to the parked runway to read the whole flight again
+    const restart = () => {
+      tl?.kill()
+      phase = 'ground'
+      legIndex = 0
+      busy = false
+      p.v = 0
+      maneuverRef.current.active = false
+      progressRef.current = 0
+      window.scrollTo(0, 0)
+    }
+    restartRef.current = restart
+
+    const forward = () => {
+      if (phase === 'ground') startTakeoff()
+      else if (phase === 'flight') {
+        if (legIndex < N - 1) goToLeg(legIndex + 1, false)
+        else startLanding()
+      }
+    }
+    const backward = () => {
+      if (phase === 'flight' && legIndex > 0) goToLeg(legIndex - 1, true)
+      else if (phase === 'landing' || phase === 'landed') reverseLanding()
     }
 
     const onWheel = (e) => {
-      if (phase === 'ground' && e.deltaY > 0) startTakeoff()
-      else if (phase === 'flight' && e.deltaY > 0 && atBottom()) startLanding()
-      else if ((phase === 'landing' || phase === 'landed') && e.deltaY < 0) reverseLanding()
+      if (busy) return
+      if (e.deltaY > 4) forward()
+      else if (e.deltaY < -4) backward()
     }
     const onKey = (e) => {
-      const down = ['ArrowDown', 'PageDown', ' ', 'Spacebar', 'Enter'].includes(e.key)
-      const up = ['ArrowUp', 'PageUp'].includes(e.key)
-      if (phase === 'ground' && down) startTakeoff()
-      else if (phase === 'flight' && down && atBottom()) startLanding()
-      else if ((phase === 'landing' || phase === 'landed') && up) reverseLanding()
+      if (busy) return
+      if (['ArrowDown', 'PageDown', ' ', 'Spacebar', 'Enter'].includes(e.key)) forward()
+      else if (['ArrowUp', 'PageUp'].includes(e.key)) backward()
     }
     let touchY = null
     const onTouchStart = (e) => (touchY = e.touches[0]?.clientY ?? null)
     const onTouchMove = (e) => {
-      if (touchY == null) return
-      const dy = touchY - (e.touches[0]?.clientY ?? touchY) // >0 = swipe up = scroll down
-      if (phase === 'ground' && dy > 6) startTakeoff()
-      else if (phase === 'flight' && dy > 6 && atBottom()) startLanding()
-      else if ((phase === 'landing' || phase === 'landed') && dy < -6) reverseLanding()
+      if (busy || touchY == null) return
+      const dy = touchY - (e.touches[0]?.clientY ?? touchY) // >0 = swipe up = forward
+      if (dy > 26) { forward(); touchY = e.touches[0]?.clientY }
+      else if (dy < -26) { backward(); touchY = e.touches[0]?.clientY }
     }
 
-    window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('wheel', onWheel, { passive: true })
     window.addEventListener('keydown', onKey)
     window.addEventListener('touchstart', onTouchStart, { passive: true })
@@ -125,8 +162,7 @@ function App() {
 
     return () => {
       tl?.kill()
-      unlock()
-      window.removeEventListener('scroll', onScroll)
+      doc.style.overflow = ''
       window.removeEventListener('wheel', onWheel)
       window.removeEventListener('keydown', onKey)
       window.removeEventListener('touchstart', onTouchStart)
@@ -139,13 +175,10 @@ function App() {
       {!loaded && <LoadingScreen onDone={handleLoaded} />}
       {loaded && (
         <>
-          <Scene3D progressRef={progressRef} />
+          <Scene3D progressRef={progressRef} maneuverRef={maneuverRef} />
           <NavInstruments progressRef={progressRef} />
-          <FlightHUD progressRef={progressRef} />
+          <FlightHUD progressRef={progressRef} navRef={navRef} onFlyAgain={() => restartRef.current && restartRef.current()} />
           <FlightAudio progressRef={progressRef} />
-          {/* invisible spacer that gives the page real scrollable height for
-              the cruise portion of the flight */}
-          <div ref={spacerRef} style={{ height: `${FLIGHT_LENGTH_VH}vh` }} />
         </>
       )}
     </>

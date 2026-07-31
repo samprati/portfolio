@@ -28,9 +28,9 @@ export const TIMELINE = [
     no: '01',
     hero: 'CALM',
     title: 'How I work',
-    kicker: 'PHILOSOPHY',
+    kicker: 'THE PHILOSOPHY',
     quote:
-      'Design-systems-first and mildly obsessed with reuse — build the component once, use it everywhere. I bring 3–4 directions instead of one "final" answer, and I speak to engineers in their own language.',
+      '12+ years turning “this screen is confusing” into “oh, that’s easy.” Design-systems-first and obsessed with reuse — build the component once, use it everywhere. I bring 3–4 directions instead of one “final” answer, treat every stakeholder meeting as free research, and talk to engineers in their own language — HTML, SCSS, JavaScript.',
   },
   {
     key: 'kl',
@@ -40,9 +40,9 @@ export const TIMELINE = [
     no: '02',
     hero: '2012 — 2017',
     title: 'Where it started',
-    kicker: 'EXPERIENCE · KUALA LUMPUR',
+    kicker: 'THE EARLY YEARS · KUALA LUMPUR',
     quote:
-      'From UI and systems work to owning product design across KL — CTI, Optimizer HQ and Wiedu. Cut support tickets 25% and wrote the first design guidelines.',
+      'Five roles across Kuala Lumpur — UI Designer & System Engineer at CTI, Senior UI at Optimizer HQ, then Product Designer at Wiedu. Streamlined delivery by 20%, lifted engagement 15%, cut support tickets 25% with clearer navigation, and wrote the first shared UI components and design guidelines.',
   },
   {
     key: 'servedeck',
@@ -52,9 +52,9 @@ export const TIMELINE = [
     no: '03',
     hero: '2017 — 2020',
     title: 'ServeDeck',
-    kicker: 'EXPERIENCE · MANDRILL TECH',
+    kicker: 'SENIOR UI · MANDRILL TECH',
     quote:
-      'Senior UI Designer on a smart facility-operations platform, web and mobile. Dense operational data turned into layouts a team can read in seconds. +15% downloads.',
+      'Senior UI Designer at Mandrill Tech, leading UX/UI and interaction design for ServeDeck — a smart facility-operations platform across web and mobile. Owned the full cycle from personas and journeys to high-fidelity specs, turned dense operational data into layouts teams read in seconds, and built shared patterns. Downloads +15%, satisfaction +10%.',
   },
   {
     key: 'teleport',
@@ -64,9 +64,9 @@ export const TIMELINE = [
     no: '04',
     hero: '2020 — 2021',
     title: 'Teleport App',
-    kicker: 'EXPERIENCE · AIRASIA GROUP',
+    kicker: 'PRODUCT DESIGN · AIRASIA GROUP',
     quote:
-      "Product Designer for AirAsia's logistics arm, mid-pandemic. Mapped the order journey end to end and rebuilt the drop-off points first — drop-off down 30%.",
+      'Product Designer for Teleport, AirAsia’s logistics arm, through its rapid pandemic-era expansion. Designed the order-placement experience, mapped the full order journey end to end and rebuilt the drop-off points first — all within a shared design-system framework. Efficiency +25%, drop-off −30%, mockup delivery time −20%.',
   },
   {
     key: 'hitachi',
@@ -76,9 +76,9 @@ export const TIMELINE = [
     no: '05',
     hero: '2021 — NOW',
     title: 'Lead Product Designer',
-    kicker: 'EXPERIENCE · HITACHI VANTARA',
+    kicker: 'LEADING DESIGN · HITACHI VANTARA',
     quote:
-      'Senior UX to Team Lead of five, shaping five presales tools worldwide. Built the shared design system that ties them together — UI inconsistency down 35%.',
+      'From Senior UX Designer to Team Lead of five. As design authority I redesigned the web channel — conversion +20%, retention +20% — then took the lead across five worldwide presales tools: storage sizing, TCO calculation and infrastructure monitoring. Built and maintain the shared design system and tokens that tie them together — UI inconsistency −35%.',
   },
   {
     key: 'education',
@@ -90,7 +90,7 @@ export const TIMELINE = [
     title: 'Software Engineering',
     kicker: 'EDUCATION · 2009 — 2016',
     quote:
-      'MSc Computer Software Engineering — Staffordshire University, UK. BSc (Hons) Computer Games Development — Asia Pacific University, Malaysia. A build-first foundation under the design.',
+      'MSc Computer Software Engineering — Staffordshire University, UK (2014–2016). BSc (Hons) Computer Games Development — Asia Pacific University, Malaysia, CGPA 3.1 (2009–2012). A build-first foundation sitting under the design.',
   },
   {
     key: 'skills',
@@ -102,19 +102,58 @@ export const TIMELINE = [
     title: 'On the flight deck',
     kicker: 'SKILLS · THE TOOLKIT',
     quote:
-      'Design systems & component libraries · enterprise UX and B2B SaaS · Figma, prototyping, research · HTML · SCSS · JavaScript · WCAG 2.2 · leading and mentoring designers.',
+      'Design systems & component libraries · enterprise UX · B2B SaaS · interaction design · information architecture · wireframing, prototyping, usability & A/B testing · user research · WCAG 2.2. Figma, Adobe XD, Sketch, After Effects, Miro, Jira and generative-AI workflows. HTML5, CSS/SCSS, JavaScript. Leading & mentoring 5 designers, design ops and Scrum delivery.',
+  },
+  {
+    key: 'work',
+    label: 'SELECTED WORK',
+    pos: [3, 69.0, -236],
+    look: [3, 68.7, -266],
+    no: '08',
+    hero: 'WORK',
+    title: 'Selected Work',
+    kicker: 'THINGS I’VE BUILT ON THE SIDE',
+    quote: 'Three projects beyond the day job — take a look at them below.',
   },
   {
     key: 'achievements',
     label: 'ACHIEVEMENTS',
-    pos: [2, 68.0, -236],
-    look: [2, 67.7, -266],
-    no: '08',
+    pos: [-2, 68.0, -266],
+    look: [-2, 67.7, -296],
+    no: '09',
     hero: 'PLATINUM',
     title: 'Kaitakusha Seishin',
     kicker: 'ACHIEVEMENTS · HITACHI AWARD',
     quote:
-      "Hitachi's Platinum Award for outstanding contribution to large-scale web UX. A design system that cut inconsistency 35% and lifted conversion 20%; Teleport drop-off down 30%.",
+      'Hitachi’s Platinum Award — Kaitakusha Seishin — for outstanding contribution to large-scale web UX, the highest individual recognition. Next Design System collaborator across multiple platforms, and certified in generative AI for design (Growth School). English (fluent) · Hindi (native).',
+  },
+]
+
+// The three side projects shown as a small clickable gallery when the flight
+// reaches the SELECTED WORK leg (rendered in the HUD — see FlightHUD).
+// Swap `href` for the real links and drop images at /work/*.webp to replace
+// the gradient placeholders (set `img: '/work/xxx.webp'`).
+export const WORKS = [
+  {
+    title: 'Design System Kit',
+    tag: 'Components · Tokens',
+    href: '#',
+    accent: ['#0b5fb8', '#4fd6ff'],
+    img: null,
+  },
+  {
+    title: 'Logistics Flow Study',
+    tag: 'UX Case Study',
+    href: '#',
+    accent: ['#6a3df0', '#c9a9ff'],
+    img: null,
+  },
+  {
+    title: 'Facility Ops Dashboard',
+    tag: 'Product Design',
+    href: '#',
+    accent: ['#e8663d', '#ffc38a'],
+    img: null,
   },
 ]
 
@@ -149,8 +188,8 @@ export const ARRIVAL = {
 const ROLL = { pos: [0, 1.5, 66], look: [0, 2.6, 40] } // accelerating down the runway, near level
 const TAKEOFF = { pos: [0, 1.7, 46], look: [0, 11, 12] } // rotation — nose lifts off
 const CLIMB = { pos: [0, 26, 24], look: [0, 45, -2] } // steep climb up through the deck
-const FLARE = { pos: [0, 22, -268], look: [0, 5, -294] } // descending back down through the deck
-const LANDING = { pos: [0, 1.3, -294], look: [0, -1.4, -322] } // flaring onto the arrival runway
+const FLARE = { pos: [0, 22, -298], look: [0, 5, -324] } // descending back down through the deck
+const LANDING = { pos: [0, 1.3, -324], look: [0, -1.4, -352] } // flaring onto the arrival runway
 
 const LEAD = [ROLL, TAKEOFF, CLIMB]
 const TAIL = [FLARE, LANDING]
@@ -170,8 +209,8 @@ export const CONTENT_PROGRESS = TIMELINE.map(
 
 // Airport / runway anchor points, shared by the runway, airport and scenery.
 export const DEPARTURE_Z = 50 // departure airport centre
-export const ARRIVAL_Z = -292 // arrival airport centre
+export const ARRIVAL_Z = -322 // arrival airport centre
 
 // Z extent of the world, used to scatter clouds and lay the ground.
 export const ROAD_START_Z = 72
-export const ROAD_END_Z = -336
+export const ROAD_END_Z = -366

@@ -72,7 +72,7 @@ function LowScenery({ children }) {
   return <group ref={ref}>{children}</group>
 }
 
-export default function Scene3D({ progressRef }) {
+export default function Scene3D({ progressRef, maneuverRef }) {
   return (
     <Canvas
       camera={{ fov: 62, near: 0.1, far: 900 }}
@@ -118,7 +118,7 @@ export default function Scene3D({ progressRef }) {
         <CloudTunnel />
       </Suspense>
 
-      <CameraFlight progressRef={progressRef} />
+      <CameraFlight progressRef={progressRef} maneuverRef={maneuverRef} />
 
       <EffectComposer multisampling={0}>
         {/* very light bloom — enough for a soft glow, not a white-out */}

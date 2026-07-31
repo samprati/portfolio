@@ -6,6 +6,7 @@ import {
   CRUISE_Y,
   BOARDING,
   ARRIVAL,
+  WORKS,
 } from '../data/timeline.js'
 import useIsMobile from '../hooks/useIsMobile.js'
 import PassCard, { pp } from './PassCard.jsx'
@@ -20,6 +21,18 @@ const routeCity = { fontSize: 10.5, letterSpacing: 1.2, color: '#6a7788', textTr
 const routeArrow = { position: 'absolute', right: -19, top: 8, color: '#0b5fb8', fontSize: 13 }
 const tagline = { fontSize: 16, fontStyle: 'italic', color: '#39485a', lineHeight: 1.5, textAlign: 'center' }
 const arriveContact = { display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 12, fontSize: 17 }
+const flyAgainBtn = {
+  fontFamily: "'PP Gosha Sans', sans-serif",
+  fontWeight: 700,
+  fontSize: 14,
+  letterSpacing: 2,
+  color: '#fff',
+  background: '#0b5fb8',
+  border: 0,
+  borderRadius: 10,
+  padding: '12px 22px',
+  cursor: 'pointer',
+}
 
 // --- tuning ---------------------------------------------------------------
 const FEET_PER_UNIT = 640 // world Y units → altitude in feet (cruise ≈ 33k ft)
@@ -43,10 +56,11 @@ function altYAt(p) {
 
 const fmt = (n) => Math.round(n).toLocaleString('en-US')
 
-export default function FlightHUD({ progressRef }) {
+export default function FlightHUD({ progressRef, navRef, onFlyAgain }) {
   const isMobile = useIsMobile()
   const [section, setSection] = useState('BOARDING')
   const [hint, setHint] = useState('takeoff') // 'takeoff' | 'land' | null
+  const [nav, setNav] = useState({ label: '', turn: false }) // "turning to leg —" note
 
   // personalise the final leg to the visitor's region: KUL → HYD → <you>.
   // India visitors already end at Hyderabad, so the route stays KUL → HYD.
@@ -163,6 +177,12 @@ export default function FlightHUD({ progressRef }) {
       const nextHint = p < 0.05 ? 'takeoff' : p > END_T - 0.03 && p < END_T + 0.015 ? 'land' : null
       setHint((prev) => (prev !== nextHint ? nextHint : prev))
 
+      // "turning to leg —" note while a transition is in progress
+      const nv = navRef && navRef.current
+      const nl = nv && nv.moving ? nv.label : ''
+      const nt = nv && nv.moving ? nv.turn : false
+      setNav((prev) => (prev.label !== nl || prev.turn !== nt ? { label: nl, turn: nt } : prev))
+
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
@@ -237,6 +257,11 @@ export default function FlightHUD({ progressRef }) {
         <a href={`https://${ARRIVAL.linkedin}`} target="_blank" rel="noreferrer" style={{ ...pp.link, display: 'inline-block', marginTop: 12 }}>
           {ARRIVAL.linkedin}
         </a>
+        <div style={{ marginTop: 20 }}>
+          <button type="button" style={flyAgainBtn} onClick={onFlyAgain}>
+            ✈ FLY AGAIN TO READ
+          </button>
+        </div>
       </PassCard>
 
       {/* top bar */}
@@ -303,9 +328,56 @@ export default function FlightHUD({ progressRef }) {
         </div>
       </div>
 
+      {/* transition note — "turning to leg —" while flying between legs */}
+      {nav.label && (
+        <div style={s.navNote}>
+          {nav.turn ? '↰ TURNING TO' : '✈ FLYING TO'} — {nav.label}
+        </div>
+      )}
+
+      {/* SELECTED WORK — clickable side-project gallery, only on that leg */}
+      <div
+        style={{
+          ...s.workWrap,
+          ...(isMobile ? s.workWrapMobile : null),
+          opacity: section === 'SELECTED WORK' ? 1 : 0,
+          pointerEvents: section === 'SELECTED WORK' ? 'auto' : 'none',
+          transform: `translateX(-50%) translateY(${section === 'SELECTED WORK' ? 0 : 14}px)`,
+        }}
+      >
+        {WORKS.map((w) => (
+          <a
+            key={w.title}
+            href={w.href}
+            target={w.href.startsWith('#') ? undefined : '_blank'}
+            rel="noreferrer"
+            style={{ ...s.workCard, ...(isMobile ? { width: 'calc((100vw - 40px) / 3)' } : null) }}
+          >
+            <div
+              style={{
+                ...s.workThumb,
+                ...(isMobile ? { height: 60 } : null),
+                background: w.img
+                  ? `center/cover url(${w.img})`
+                  : `linear-gradient(135deg, ${w.accent[0]}, ${w.accent[1]})`,
+              }}
+            >
+              {!w.img && <span style={s.workThumbInitial}>{w.title.charAt(0)}</span>}
+            </div>
+            <div style={s.workMeta}>
+              <span style={s.workTitle}>{w.title}</span>
+              <span style={s.workTag}>{w.tag} ↗</span>
+            </div>
+          </a>
+        ))}
+      </div>
+
       {/* bottom bar */}
-      <div style={{ ...s.bottomRow, ...(isMobile ? { left: 14, right: 14, gap: 10, fontSize: 10.5 } : null) }}>
-        <span style={s.section}>SECTION — {section}</span>
+      <div style={{ ...s.bottomRow, ...(isMobile ? { left: 14, right: 14, gap: 10 } : null) }}>
+        <span style={s.section}>
+          <span style={s.sectionLabel}>SECTION</span>
+          <span style={s.sectionName}>{section}</span>
+        </span>
         {hint === 'takeoff' && <span style={s.hint}>▸ SCROLL TO TAKE OFF</span>}
         {hint === 'land' && <span style={s.hint}>▸ SCROLL TO LAND</span>}
         <div style={s.progressTrack}>
@@ -571,18 +643,96 @@ const s = {
     fontWeight: 700,
     textShadow: '0 1px 12px rgba(0,0,0,0.35)',
   },
-  section: { color: INK },
+  section: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 9,
+    padding: '7px 14px',
+    background: 'rgba(9,14,22,0.62)',
+    border: `1px solid ${BORDER}`,
+    borderRadius: 999,
+    backdropFilter: 'blur(8px)',
+    WebkitBackdropFilter: 'blur(8px)',
+  },
+  sectionLabel: { fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: '#8fd4ff' },
+  sectionName: { fontFamily: "'PP Gosha Sans', sans-serif", fontWeight: 800, fontSize: 12.5, letterSpacing: 1.5, color: INK },
+  navNote: {
+    position: 'absolute',
+    bottom: 64,
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+    fontFamily: MONO,
+    fontSize: 12,
+    letterSpacing: 3,
+    fontWeight: 700,
+    color: '#4fd6ff',
+    textShadow: '0 1px 12px rgba(0,0,0,0.4)',
+  },
   hint: { color: '#6bffb0' },
+
+  // ---- SELECTED WORK gallery ----
+  workWrap: {
+    position: 'absolute',
+    left: '50%',
+    bottom: 92,
+    transform: 'translateX(-50%)',
+    display: 'flex',
+    gap: 14,
+    transition: 'opacity 0.5s ease, transform 0.5s ease',
+    willChange: 'opacity, transform',
+  },
+  workWrapMobile: {
+    bottom: 78,
+    gap: 8,
+    width: 'calc(100vw - 24px)',
+    justifyContent: 'center',
+  },
+  workCard: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: 148,
+    borderRadius: 12,
+    overflow: 'hidden',
+    textDecoration: 'none',
+    background: 'rgba(8,12,20,0.6)',
+    border: `1px solid ${BORDER}`,
+    backdropFilter: 'blur(10px)',
+    WebkitBackdropFilter: 'blur(10px)',
+    boxShadow: '0 14px 40px rgba(0,0,0,0.4)',
+  },
+  workThumb: {
+    position: 'relative',
+    height: 84,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  workThumbInitial: {
+    fontFamily: "'PP Gosha Sans', sans-serif",
+    fontWeight: 800,
+    fontSize: 34,
+    color: 'rgba(255,255,255,0.9)',
+    textShadow: '0 2px 10px rgba(0,0,0,0.3)',
+  },
+  workMeta: { display: 'flex', flexDirection: 'column', gap: 3, padding: '9px 11px 11px' },
+  workTitle: { fontFamily: "'PP Gosha Sans', sans-serif", fontWeight: 700, fontSize: 12.5, color: INK, letterSpacing: 0.4 },
+  workTag: { fontFamily: MONO, fontSize: 9.5, letterSpacing: 1, color: '#8fd4ff' },
   progressTrack: {
     flex: '0 1 240px',
-    height: 2,
-    background: 'rgba(255,255,255,0.22)',
-    borderRadius: 2,
+    height: 5,
+    background: 'rgba(9,14,22,0.5)',
+    border: `1px solid ${BORDER}`,
+    borderRadius: 999,
+    overflow: 'hidden',
+    backdropFilter: 'blur(6px)',
+    WebkitBackdropFilter: 'blur(6px)',
   },
   progressFill: {
     height: '100%',
     width: '0%',
-    background: '#eaf3ff',
-    borderRadius: 2,
+    background: 'linear-gradient(90deg, #4fd6ff, #6bffb0)',
+    borderRadius: 999,
+    boxShadow: '0 0 10px rgba(79,214,255,0.6)',
   },
 }
