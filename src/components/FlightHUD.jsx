@@ -9,6 +9,7 @@ import {
 } from '../data/timeline.js'
 import useIsMobile from '../hooks/useIsMobile.js'
 import PassCard, { pp } from './PassCard.jsx'
+import { getDestination } from '../data/destination.js'
 
 // placement + content styles for the boarding / arrival passes
 const hudCard = { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', transition: 'opacity 0.5s ease' }
@@ -46,6 +47,18 @@ export default function FlightHUD({ progressRef }) {
   const isMobile = useIsMobile()
   const [section, setSection] = useState('BOARDING')
   const [hint, setHint] = useState('takeoff') // 'takeoff' | 'land' | null
+
+  // personalise the final leg to the visitor's region: KUL → HYD → <you>.
+  // India visitors already end at Hyderabad, so the route stays KUL → HYD.
+  const dest = useMemo(getDestination, [])
+  const routeStops = useMemo(
+    () =>
+      dest.code === 'IND'
+        ? BOARDING.route.slice(0, 2)
+        : [...BOARDING.route.slice(0, -1), { code: dest.code, city: dest.city }],
+    [dest],
+  )
+  const lastLeg = routeStops[routeStops.length - 1]
 
   // DOM refs updated every frame (kept out of React state for smoothness)
   const altStrip = useRef(null)
@@ -184,11 +197,11 @@ export default function FlightHUD({ progressRef }) {
         }
       >
         <div style={route}>
-          {BOARDING.route.map((r, i) => (
-            <div key={r.code} style={routeItem}>
+          {routeStops.map((r, i) => (
+            <div key={r.code + i} style={routeItem}>
               <span style={routeCode}>{r.code}</span>
               <span style={routeCity}>{r.city}</span>
-              {i < BOARDING.route.length - 1 && <span style={routeArrow}>✈</span>}
+              {i < routeStops.length - 1 && <span style={routeArrow}>✈</span>}
             </div>
           ))}
         </div>
@@ -205,8 +218,8 @@ export default function FlightHUD({ progressRef }) {
               <span style={pp.tag}>ARRIVAL</span>
               <span>{ARRIVAL.sub}</span>
             </div>
-            <div style={{ ...pp.headTitle, fontSize: isMobile ? 36 : 50 }}>{ARRIVAL.title}</div>
-            <div style={pp.headSub}>{ARRIVAL.note}</div>
+            <div style={{ ...pp.headTitle, fontSize: isMobile ? 36 : 50 }}>{dest.city}</div>
+            <div style={pp.headSub}>{ARRIVAL.note} · {dest.city}</div>
           </>
         }
         stub={
@@ -229,7 +242,7 @@ export default function FlightHUD({ progressRef }) {
       {/* top bar */}
       <div style={s.topRow}>
         <span style={s.logo}>SAMPRATI DASH</span>
-        <span style={{ ...s.tail, display: isMobile ? 'none' : 'inline' }}>SD·2026 · KUL → BER</span>
+        <span style={{ ...s.tail, display: isMobile ? 'none' : 'inline' }}>SD·2026 · KUL → {lastLeg.code}</span>
       </div>
 
       {/* left — ALTITUDE tape (desktop only) */}
@@ -332,7 +345,7 @@ const s = {
     inset: 0,
     pointerEvents: 'none',
     zIndex: 10,
-    fontFamily: "'Google Sans Flex', sans-serif",
+    fontFamily: "'PP Gosha Sans', sans-serif",
     color: INK,
   },
 
@@ -354,7 +367,7 @@ const s = {
   },
   passFlight: { color: '#6bffb0' },
   passName: {
-    fontFamily: "'Bricolage Grotesque', sans-serif",
+    fontFamily: "'PP Gosha Sans', sans-serif",
     fontWeight: 800,
     fontSize: 'clamp(40px, 7vw, 62px)',
     letterSpacing: 1,
@@ -391,7 +404,7 @@ const s = {
   arrivalCard: { ...CARD, opacity: 0 },
   arriveSub: { fontFamily: MONO, fontSize: 13, letterSpacing: 4, color: '#6bffb0', marginBottom: 14 },
   arriveTitle: {
-    fontFamily: "'Bricolage Grotesque', sans-serif",
+    fontFamily: "'PP Gosha Sans', sans-serif",
     fontWeight: 800,
     fontSize: 'clamp(38px, 6.5vw, 58px)',
     lineHeight: 1.03,
@@ -412,7 +425,7 @@ const s = {
     textTransform: 'uppercase',
   },
   arriveName: {
-    fontFamily: "'Bricolage Grotesque', sans-serif",
+    fontFamily: "'PP Gosha Sans', sans-serif",
     fontWeight: 800,
     fontSize: 22,
     letterSpacing: 3,
@@ -432,7 +445,7 @@ const s = {
     fontWeight: 700,
     textShadow: '0 1px 12px rgba(0,0,0,0.35)',
   },
-  logo: { fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 800 },
+  logo: { fontFamily: "'PP Gosha Sans', sans-serif", fontWeight: 800 },
   tail: { fontFamily: MONO, letterSpacing: 3, color: '#bcd8f5' },
 
   // vertical tape column, centered on screen height

@@ -39,7 +39,7 @@ const PassCard = forwardRef(function PassCard({ header, children, stub, style, h
 export default PassCard
 
 const MONO = "'SF Mono', ui-monospace, 'Roboto Mono', Menlo, monospace"
-const HEAD = "'Bricolage Grotesque', sans-serif"
+const HEAD = "'PP Gosha Sans', sans-serif"
 
 export const pp = {
   outer: {

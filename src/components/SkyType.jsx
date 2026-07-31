@@ -3,6 +3,10 @@ import { useFrame } from '@react-three/fiber'
 import { Billboard, Text } from '@react-three/drei'
 import * as THREE from 'three'
 import { TIMELINE } from '../data/timeline.js'
+// troika (3D text) can't parse woff2 — use the TTF conversions here. The DOM
+// still uses the woff2 versions via CSS.
+import goshaBold from '../assets/fonts/PPGoshaSans-Bold.ttf'
+import goshaRegular from '../assets/fonts/PPGoshaSans-Regular.ttf'
 
 // Pure floating typography (Dungyov style): a large hollow/outlined year and a
 // big ghost leg-number paired with small solid labels, arranged as an
@@ -37,6 +41,7 @@ function LegType({ leg }) {
       <Text
         userData={{ bf: 0, bo: 0.28 }}
         position={[3.4, 1.1, -1.5]}
+        font={goshaBold}
         fontSize={3.8}
         anchorX="center"
         anchorY="middle"
@@ -52,6 +57,7 @@ function LegType({ leg }) {
       <Text
         userData={{ bf: 0, bo: 1 }}
         position={[-3.1, 1.55, -0.4]}
+        font={goshaBold}
         fontSize={1.5}
         anchorX="left"
         anchorY="middle"
@@ -68,6 +74,7 @@ function LegType({ leg }) {
       <Text
         userData={{ bf: 1, bo: 0 }}
         position={[-3.1, 0.35, 0.2]}
+        font={goshaBold}
         fontSize={0.62}
         anchorX="left"
         anchorY="middle"
@@ -81,6 +88,7 @@ function LegType({ leg }) {
       <Text
         userData={{ bf: 1, bo: 0 }}
         position={[-3.1, -0.18, 0.2]}
+        font={goshaRegular}
         fontSize={0.28}
         anchorX="left"
         anchorY="middle"
@@ -94,6 +102,7 @@ function LegType({ leg }) {
       <Text
         userData={{ bf: 1, bo: 0 }}
         position={[-3.1, -0.95, 0.5]}
+        font={goshaRegular}
         fontSize={0.3}
         anchorX="left"
         anchorY="top"

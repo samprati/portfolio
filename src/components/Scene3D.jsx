@@ -50,7 +50,9 @@ export default function Scene3D({ progressRef }) {
         <ErrorBoundary>
           <Grass />
         </ErrorBoundary>
-        <SkyType />
+        <ErrorBoundary>
+          <SkyType />
+        </ErrorBoundary>
         <CloudTunnel />
       </Suspense>
 
