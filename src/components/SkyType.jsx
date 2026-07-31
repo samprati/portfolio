@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Billboard, Text } from '@react-three/drei'
 import * as THREE from 'three'
 import { TIMELINE } from '../data/timeline.js'
@@ -22,7 +22,7 @@ const Z_OFFSET = -15 // sit the cluster ahead of the camera's waypoint
 const FADE_NEAR = 6
 const FADE_FAR = 34
 
-function LegType({ leg }) {
+function LegType({ leg, fit }) {
   const group = useRef()
 
   useFrame((state) => {
@@ -37,6 +37,8 @@ function LegType({ leg }) {
 
   return (
     <Billboard ref={group} position={[leg.pos[0], leg.pos[1], leg.pos[2] + Z_OFFSET]}>
+      {/* the wide asymmetric cluster is scaled/nudged to fit narrow screens */}
+      <group scale={fit.scale} position={[fit.x, 0, 0]}>
       {/* big ghost leg number, furthest back */}
       <Text
         userData={{ bf: 0, bo: 0.28 }}
@@ -112,15 +114,25 @@ function LegType({ leg }) {
       >
         {leg.quote}
       </Text>
+      </group>
     </Billboard>
   )
 }
 
 export default function SkyType() {
+  // the cluster is authored for wide screens (spans ~8 world units); on narrow
+  // / portrait viewports scale it down and re-centre so it stays on screen
+  const aspect = useThree((s) => s.viewport.aspect)
+  const fit =
+    aspect >= 1.35
+      ? { scale: 1, x: 0 }
+      : aspect >= 0.9
+        ? { scale: 0.74, x: -0.4 }
+        : { scale: 0.5, x: -0.7 }
   return (
     <>
       {TIMELINE.map((leg) => (
-        <LegType key={leg.key} leg={leg} />
+        <LegType key={leg.key} leg={leg} fit={fit} />
       ))}
     </>
   )

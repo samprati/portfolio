@@ -183,9 +183,21 @@
 }
 @keyframes ls-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
-/* mobile: photo becomes a faded backdrop, content centred */
+/* mobile: photo becomes a faded backdrop, content centred, type scaled down */
 @media (max-width: 760px) {
-  .ls-photo { width: 100%; opacity: 0.28; -webkit-mask-image: linear-gradient(180deg, transparent, #000 60%); mask-image: linear-gradient(180deg, transparent, #000 60%); }
-  .ls-content { padding: 28px 24px 32px; --shift: 0px; }
-  .ls-center { width: auto; }
+  .ls-photo { width: 100%; opacity: 0.24; -webkit-mask-image: linear-gradient(180deg, transparent, #000 62%); mask-image: linear-gradient(180deg, transparent, #000 62%); }
+  .ls-content { padding: 22px 20px 26px; --shift: 0px; }
+  .ls-center { position: static; transform: none; top: auto; left: auto; width: auto; margin: 0 auto; align-items: center; gap: 16px; flex: 1; justify-content: center; text-align: center; }
+  .ls-num b { font-size: 74px; letter-spacing: -2px; }
+  .ls-num sup { font-size: 20px; margin-top: 8px; }
+  .ls-label { font-size: 10px; letter-spacing: 3px; }
+  .ls-list { max-width: 360px; margin: 0 auto; font-size: 12.5px; gap: 8px; }
+  .ls-seg { max-width: 360px; }
+  .ls-top .name { font-size: 13px; letter-spacing: 1px; }
+  .ls-top .flight { font-size: 11px; letter-spacing: 2px; }
+  .ls-cta .btn { font-size: 18px; letter-spacing: 2px; padding: 13px 26px; }
+}
+@media (max-width: 400px) {
+  .ls-num b { font-size: 60px; }
+  .ls-list { font-size: 11.5px; }
 }
