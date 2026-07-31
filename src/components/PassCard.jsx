@@ -31,6 +31,8 @@ const PassCard = forwardRef(function PassCard({ header, children, stub, style, h
         <div style={{ ...pp.body, paddingBottom: stub ? STUB_H + 12 : 26 }}>{children}</div>
         {stub && <div style={pp.perf} />}
         {stub && <div style={pp.stub}>{stub}</div>}
+        {/* moving specular glare — tracks the mouse for a glossy 3D look */}
+        <div style={pp.glare} />
       </div>
     </div>
   )
@@ -46,8 +48,12 @@ export const pp = {
     position: 'absolute',
     borderRadius: 18,
     overflow: 'hidden',
-    boxShadow: '0 30px 80px rgba(6,20,40,0.42)',
+    // layered shadows + a bright top edge → a card that sits above the scene
+    boxShadow:
+      '0 2px 0 rgba(255,255,255,0.5) inset, 0 34px 90px rgba(6,20,40,0.5), 0 12px 30px rgba(6,20,40,0.34)',
+    border: '1px solid rgba(255,255,255,0.5)',
     willChange: 'opacity, transform',
+    transformStyle: 'preserve-3d',
   },
   inner: {
     position: 'relative',
@@ -55,6 +61,16 @@ export const pp = {
     color: '#1d2836',
     WebkitBackdropFilter: 'blur(3px)',
     backdropFilter: 'blur(3px)',
+    overflow: 'hidden',
+  },
+  glare: {
+    position: 'absolute',
+    inset: 0,
+    pointerEvents: 'none',
+    background:
+      'radial-gradient(circle at var(--mx,50%) var(--my,32%), rgba(255,255,255,0.5), rgba(255,255,255,0.12) 30%, transparent 58%)',
+    mixBlendMode: 'soft-light',
+    opacity: 0.9,
   },
   header: {
     background: BLUE,

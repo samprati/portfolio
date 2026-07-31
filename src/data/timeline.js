@@ -113,13 +113,27 @@ export const TIMELINE = [
     hero: 'WORK',
     title: 'Selected Work',
     kicker: 'THINGS I’VE BUILT ON THE SIDE',
-    quote: 'Three projects beyond the day job — take a look at them below.',
+    quote: 'Three projects beyond the day job — keep scrolling to open them up.',
+  },
+  {
+    // Showcase leg — the SkyType text is suppressed for this one (showcase:true);
+    // the HUD renders the three big, clickable project cards instead.
+    key: 'work-showcase',
+    label: 'PROJECT SHOWCASE',
+    pos: [-3, 70.0, -266],
+    look: [-3, 69.7, -296],
+    no: '08',
+    showcase: true,
+    hero: '',
+    title: '',
+    kicker: '',
+    quote: '',
   },
   {
     key: 'achievements',
     label: 'ACHIEVEMENTS',
-    pos: [-2, 68.0, -266],
-    look: [-2, 67.7, -296],
+    pos: [2, 68.0, -296],
+    look: [2, 67.7, -326],
     no: '09',
     hero: 'PLATINUM',
     title: 'Kaitakusha Seishin',
@@ -129,31 +143,47 @@ export const TIMELINE = [
   },
 ]
 
-// The three side projects shown as a small clickable gallery when the flight
-// reaches the SELECTED WORK leg (rendered in the HUD — see FlightHUD).
-// Swap `href` for the real links and drop images at /work/*.webp to replace
-// the gradient placeholders (set `img: '/work/xxx.webp'`).
+// The three side projects. Shown as a preview gallery on the SELECTED WORK leg
+// and as big, clickable cards on the PROJECT SHOWCASE leg — clicking opens the
+// detail modal (see FlightHUD). PLACEHOLDER content: swap `href` for the real
+// links, drop images at /work/*.webp (set `img: '/work/xxx.webp'`), and edit
+// year / role / summary / highlights to match the real projects.
 export const WORKS = [
   {
     title: 'Design System Kit',
     tag: 'Components · Tokens',
+    year: '2023',
+    role: 'Design Systems',
     href: '#',
     accent: ['#0b5fb8', '#4fd6ff'],
     img: null,
+    summary:
+      'A reusable component and token library built to end the redraw-the-same-button-twice problem — one source of truth for UI across products.',
+    highlights: ['80+ documented components', 'Light / dark theming via design tokens', 'Faster, cleaner developer handoff'],
   },
   {
     title: 'Logistics Flow Study',
     tag: 'UX Case Study',
+    year: '2021',
+    role: 'UX Research & Design',
     href: '#',
     accent: ['#6a3df0', '#c9a9ff'],
     img: null,
+    summary:
+      'An end-to-end study of a logistics order journey — mapping where users struggle and reworking the highest-friction steps first.',
+    highlights: ['Full journey map, persona-driven', 'Rebuilt the drop-off screens first', 'Prototype tested with real users'],
   },
   {
     title: 'Facility Ops Dashboard',
     tag: 'Product Design',
+    year: '2019',
+    role: 'Product & UI Design',
     href: '#',
     accent: ['#e8663d', '#ffc38a'],
     img: null,
+    summary:
+      'A dashboard concept turning dense operational data into calm, scannable layouts a facility team can read and act on in seconds.',
+    highlights: ['Data-dense yet readable layouts', 'Web + mobile shared patterns', 'Clear states, alerts and hierarchy'],
   },
 ]
 
@@ -188,8 +218,8 @@ export const ARRIVAL = {
 const ROLL = { pos: [0, 1.5, 66], look: [0, 2.6, 40] } // accelerating down the runway, near level
 const TAKEOFF = { pos: [0, 1.7, 46], look: [0, 11, 12] } // rotation — nose lifts off
 const CLIMB = { pos: [0, 26, 24], look: [0, 45, -2] } // steep climb up through the deck
-const FLARE = { pos: [0, 22, -298], look: [0, 5, -324] } // descending back down through the deck
-const LANDING = { pos: [0, 1.3, -324], look: [0, -1.4, -352] } // flaring onto the arrival runway
+const FLARE = { pos: [0, 22, -328], look: [0, 5, -354] } // descending back down through the deck
+const LANDING = { pos: [0, 1.3, -354], look: [0, -1.4, -382] } // flaring onto the arrival runway
 
 const LEAD = [ROLL, TAKEOFF, CLIMB]
 const TAIL = [FLARE, LANDING]
@@ -209,8 +239,8 @@ export const CONTENT_PROGRESS = TIMELINE.map(
 
 // Airport / runway anchor points, shared by the runway, airport and scenery.
 export const DEPARTURE_Z = 50 // departure airport centre
-export const ARRIVAL_Z = -322 // arrival airport centre
+export const ARRIVAL_Z = -352 // arrival airport centre
 
 // Z extent of the world, used to scatter clouds and lay the ground.
 export const ROAD_START_Z = 72
-export const ROAD_END_Z = -366
+export const ROAD_END_Z = -396

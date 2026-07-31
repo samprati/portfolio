@@ -5,6 +5,7 @@ import Scene3D from './components/Scene3D.jsx'
 import FlightHUD from './components/FlightHUD.jsx'
 import NavInstruments from './components/NavInstruments.jsx'
 import FlightAudio from './components/FlightAudio.jsx'
+import WindFX from './components/WindFX.jsx'
 import { FLIGHT_PATH, CONTENT_PROGRESS, TIMELINE } from './data/timeline.js'
 
 // Leg-snapped flight: takeoff and landing fly themselves; in between, each
@@ -24,6 +25,8 @@ function App() {
   const maneuverRef = useRef({ active: false, id: 0, from: [0, 0, 0], to: [0, 0, 0], phase: 0 })
   // { moving, turn, label } — drives the "turning to leg —" note in the HUD
   const navRef = useRef({ moving: false, turn: false, label: '' })
+  // when the HUD opens a modal (e.g. a project detail), lock scroll-nav
+  const uiLockRef = useRef(false)
   const restartRef = useRef(null)
 
   const handleLoaded = useCallback(() => setLoaded(true), [])
@@ -137,19 +140,19 @@ function App() {
     }
 
     const onWheel = (e) => {
-      if (busy) return
+      if (busy || uiLockRef.current) return
       if (e.deltaY > 4) forward()
       else if (e.deltaY < -4) backward()
     }
     const onKey = (e) => {
-      if (busy) return
+      if (busy || uiLockRef.current) return
       if (['ArrowDown', 'PageDown', ' ', 'Spacebar', 'Enter'].includes(e.key)) forward()
       else if (['ArrowUp', 'PageUp'].includes(e.key)) backward()
     }
     let touchY = null
     const onTouchStart = (e) => (touchY = e.touches[0]?.clientY ?? null)
     const onTouchMove = (e) => {
-      if (busy || touchY == null) return
+      if (busy || uiLockRef.current || touchY == null) return
       const dy = touchY - (e.touches[0]?.clientY ?? touchY) // >0 = swipe up = forward
       if (dy > 26) { forward(); touchY = e.touches[0]?.clientY }
       else if (dy < -26) { backward(); touchY = e.touches[0]?.clientY }
@@ -176,8 +179,9 @@ function App() {
       {loaded && (
         <>
           <Scene3D progressRef={progressRef} maneuverRef={maneuverRef} />
+          <WindFX progressRef={progressRef} />
           <NavInstruments progressRef={progressRef} />
-          <FlightHUD progressRef={progressRef} navRef={navRef} onFlyAgain={() => restartRef.current && restartRef.current()} />
+          <FlightHUD progressRef={progressRef} navRef={navRef} uiLockRef={uiLockRef} onFlyAgain={() => restartRef.current && restartRef.current()} />
           <FlightAudio progressRef={progressRef} />
         </>
       )}

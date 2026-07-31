@@ -56,11 +56,18 @@ function altYAt(p) {
 
 const fmt = (n) => Math.round(n).toLocaleString('en-US')
 
-export default function FlightHUD({ progressRef, navRef, onFlyAgain }) {
+export default function FlightHUD({ progressRef, navRef, uiLockRef, onFlyAgain }) {
   const isMobile = useIsMobile()
   const [section, setSection] = useState('BOARDING')
   const [hint, setHint] = useState('takeoff') // 'takeoff' | 'land' | null
   const [nav, setNav] = useState({ label: '', turn: false }) // "turning to leg —" note
+  const [openWork, setOpenWork] = useState(null) // index of the project in the detail modal
+  const [showHelp, setShowHelp] = useState(false) // "how to fly" guide
+
+  // lock scroll-navigation while any modal is open
+  useEffect(() => {
+    if (uiLockRef) uiLockRef.current = openWork !== null || showHelp
+  }, [openWork, showHelp, uiLockRef])
 
   // personalise the final leg to the visitor's region: KUL → HYD → <you>.
   // India visitors already end at Hyderabad, so the route stays KUL → HYD.
@@ -96,6 +103,17 @@ export default function FlightHUD({ progressRef, navRef, onFlyAgain }) {
     const t = []
     for (let kt = 0; kt <= 560; kt += 40) t.push(kt)
     return t
+  }, [])
+
+  // pointer, for the 3D parallax tilt on the boarding / arrival pass
+  const mouse = useRef({ x: 0, y: 0 })
+  useEffect(() => {
+    const onMove = (e) => {
+      mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1
+      mouse.current.y = (e.clientY / window.innerHeight) * 2 - 1
+    }
+    window.addEventListener('mousemove', onMove)
+    return () => window.removeEventListener('mousemove', onMove)
   }, [])
 
   useEffect(() => {
@@ -147,12 +165,25 @@ export default function FlightHUD({ progressRef, navRef, onFlyAgain }) {
       // we touch down
       const boardO = clamp01((0.06 - p) / 0.05)
       const arriveO = clamp01((p - 0.965) / 0.03)
+      // 3D parallax tilt driven by the mouse — gives the pass real depth
+      const rx = (-mouse.current.y * 7).toFixed(2)
+      const ry = (mouse.current.x * 10).toFixed(2)
+      const tf = `translate(-50%, -50%) perspective(1200px) rotateX(${rx}deg) rotateY(${ry}deg)`
+      // moving specular highlight position (for the glossy 3D glare)
+      const mx = (50 + mouse.current.x * 42).toFixed(1) + '%'
+      const my = (38 + mouse.current.y * 42).toFixed(1) + '%'
       if (boardingRef.current) {
         boardingRef.current.style.opacity = boardO
+        boardingRef.current.style.transform = tf
+        boardingRef.current.style.setProperty('--mx', mx)
+        boardingRef.current.style.setProperty('--my', my)
         boardingRef.current.style.pointerEvents = boardO > 0.5 ? 'auto' : 'none'
       }
       if (arrivalRef.current) {
         arrivalRef.current.style.opacity = arriveO
+        arrivalRef.current.style.transform = tf
+        arrivalRef.current.style.setProperty('--mx', mx)
+        arrivalRef.current.style.setProperty('--my', my)
         arrivalRef.current.style.pointerEvents = arriveO > 0.5 ? 'auto' : 'none'
       }
 
@@ -270,6 +301,11 @@ export default function FlightHUD({ progressRef, navRef, onFlyAgain }) {
         <span style={{ ...s.tail, display: isMobile ? 'none' : 'inline' }}>SD·2026 · KUL → {lastLeg.code}</span>
       </div>
 
+      {/* how-to-fly button — top centre */}
+      <button type="button" style={s.helpBtn} onClick={() => setShowHelp(true)}>
+        <span style={s.helpDot}>i</span> HOW TO FLY
+      </button>
+
       {/* left — ALTITUDE tape (desktop only) */}
       <div style={{ ...s.tape, left: 28, display: isMobile ? 'none' : 'flex' }}>
         <span style={s.tapeLabel}>ALT · FT</span>
@@ -335,14 +371,14 @@ export default function FlightHUD({ progressRef, navRef, onFlyAgain }) {
         </div>
       )}
 
-      {/* SELECTED WORK — clickable side-project gallery, only on that leg */}
+      {/* SELECTED WORK — preview gallery near the bottom */}
       <div
         style={{
           ...s.workWrap,
           ...(isMobile ? s.workWrapMobile : null),
           opacity: section === 'SELECTED WORK' ? 1 : 0,
           pointerEvents: section === 'SELECTED WORK' ? 'auto' : 'none',
-          transform: `translateX(-50%) translateY(${section === 'SELECTED WORK' ? 0 : 14}px)`,
+          transform: `translateX(-50%) translateY(${section === 'SELECTED WORK' ? 0 : 16}px)`,
         }}
       >
         {WORKS.map((w) => (
@@ -351,12 +387,12 @@ export default function FlightHUD({ progressRef, navRef, onFlyAgain }) {
             href={w.href}
             target={w.href.startsWith('#') ? undefined : '_blank'}
             rel="noreferrer"
-            style={{ ...s.workCard, ...(isMobile ? { width: 'calc((100vw - 40px) / 3)' } : null) }}
+            style={{ ...s.workCard, ...(isMobile ? { width: 'calc((100vw - 36px) / 3)' } : null) }}
           >
             <div
               style={{
                 ...s.workThumb,
-                ...(isMobile ? { height: 60 } : null),
+                ...(isMobile ? { height: 78 } : null),
                 background: w.img
                   ? `center/cover url(${w.img})`
                   : `linear-gradient(135deg, ${w.accent[0]}, ${w.accent[1]})`,
@@ -371,6 +407,132 @@ export default function FlightHUD({ progressRef, navRef, onFlyAgain }) {
           </a>
         ))}
       </div>
+
+      {/* PROJECT SHOWCASE — big clickable cards, centred; click opens the modal */}
+      <div
+        style={{
+          ...s.showWrap,
+          ...(isMobile ? s.showWrapMobile : null),
+          opacity: section === 'PROJECT SHOWCASE' ? 1 : 0,
+          pointerEvents: section === 'PROJECT SHOWCASE' && openWork === null ? 'auto' : 'none',
+          transform: `translate(-50%, -50%) translateY(${section === 'PROJECT SHOWCASE' ? 0 : 20}px)`,
+        }}
+      >
+        <span style={s.showHead}>SELECTED WORK — TAP A PROJECT</span>
+        <div style={{ ...s.showRow, ...(isMobile ? { gap: 10 } : null) }}>
+          {WORKS.map((w, i) => (
+            <button
+              key={w.title}
+              type="button"
+              onClick={() => setOpenWork(i)}
+              style={{ ...s.showCard, ...(isMobile ? { width: 'calc((100vw - 44px) / 3)' } : null) }}
+            >
+              <div
+                style={{
+                  ...s.showThumb,
+                  ...(isMobile ? { height: 96 } : null),
+                  background: w.img
+                    ? `center/cover url(${w.img})`
+                    : `linear-gradient(135deg, ${w.accent[0]}, ${w.accent[1]})`,
+                }}
+              >
+                {!w.img && <span style={s.showThumbInitial}>{w.title.charAt(0)}</span>}
+                <span style={s.showYear}>{w.year}</span>
+              </div>
+              <div style={s.showMeta}>
+                <span style={s.showTitle}>{w.title}</span>
+                <span style={s.showRole}>{w.role}</span>
+                <span style={s.showSummary}>{w.summary}</span>
+                <span style={{ ...s.showOpen, color: w.accent[1] }}>VIEW DETAILS →</span>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* how-to-fly guide modal */}
+      {showHelp && (
+        <div style={s.modalOverlay} onClick={() => setShowHelp(false)}>
+          <div style={{ ...s.helpCard, ...(isMobile ? s.modalCardMobile : null) }} onClick={(e) => e.stopPropagation()}>
+            <div style={s.helpHead}>
+              <span style={s.helpKicker}>FLIGHT SD-2026 · CABIN GUIDE</span>
+              <h3 style={s.helpTitle}>How to fly this site</h3>
+            </div>
+            <ul style={s.helpList}>
+              {[
+                ['⬇', 'Scroll down or swipe up', 'Fly forward to the next chapter of the journey.'],
+                ['⬆', 'Scroll up or swipe down', 'Bank into a U-turn and fly back to re-read the previous chapter.'],
+                ['🗂', 'Project Showcase', 'Tap any project card to open its full details. Scrolling is paused while it’s open — just close it to fly on.'],
+                ['🛬', 'The landing', 'Reach the end and the plane lands. Hit “Fly again to read” to restart from take-off.'],
+                ['🔊', 'Sound', 'Use SOUND ON / OFF (top-right) to toggle the flight audio.'],
+                ['🖱', 'Look around', 'Move your mouse to gently parallax the view as you cruise.'],
+              ].map(([icon, t, d]) => (
+                <li key={t} style={s.helpItem}>
+                  <span style={s.helpIcon}>{icon}</span>
+                  <span>
+                    <span style={s.helpItemTitle}>{t}</span>
+                    <span style={s.helpItemDesc}>{d}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <div style={s.helpActions}>
+              <button type="button" style={s.modalVisit} onClick={() => setShowHelp(false)}>
+                GOT IT — LET’S FLY ✈
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* project detail modal */}
+      {openWork !== null && (
+        <div style={s.modalOverlay} onClick={() => setOpenWork(null)}>
+          <div style={{ ...s.modalCard, ...(isMobile ? s.modalCardMobile : null) }} onClick={(e) => e.stopPropagation()}>
+            <div
+              style={{
+                ...s.modalBanner,
+                background: WORKS[openWork].img
+                  ? `center/cover url(${WORKS[openWork].img})`
+                  : `linear-gradient(135deg, ${WORKS[openWork].accent[0]}, ${WORKS[openWork].accent[1]})`,
+              }}
+            >
+              {!WORKS[openWork].img && <span style={s.modalBannerInitial}>{WORKS[openWork].title.charAt(0)}</span>}
+              <button type="button" style={s.modalClose} onClick={() => setOpenWork(null)} aria-label="Close">
+                ✕
+              </button>
+            </div>
+            <div style={s.modalBody}>
+              <span style={{ ...s.modalKicker, color: WORKS[openWork].accent[1] }}>
+                {WORKS[openWork].role} · {WORKS[openWork].year}
+              </span>
+              <h3 style={s.modalTitle}>{WORKS[openWork].title}</h3>
+              <p style={s.modalSummary}>{WORKS[openWork].summary}</p>
+              <ul style={s.modalList}>
+                {WORKS[openWork].highlights.map((h) => (
+                  <li key={h} style={s.modalListItem}>
+                    <span style={{ ...s.modalBullet, background: WORKS[openWork].accent[1] }} />
+                    {h}
+                  </li>
+                ))}
+              </ul>
+              <div style={s.modalActions}>
+                <a
+                  href={WORKS[openWork].href}
+                  target={WORKS[openWork].href.startsWith('#') ? undefined : '_blank'}
+                  rel="noreferrer"
+                  style={s.modalVisit}
+                >
+                  VISIT PROJECT ↗
+                </a>
+                <button type="button" style={s.modalCloseText} onClick={() => setOpenWork(null)}>
+                  CLOSE
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* bottom bar */}
       <div style={{ ...s.bottomRow, ...(isMobile ? { left: 14, right: 14, gap: 10 } : null) }}>
@@ -519,6 +681,76 @@ const s = {
   },
   logo: { fontFamily: "'PP Gosha Sans', sans-serif", fontWeight: 800 },
   tail: { fontFamily: MONO, letterSpacing: 3, color: '#bcd8f5' },
+
+  // ---- how-to-fly button + guide ----
+  helpBtn: {
+    position: 'absolute',
+    top: 20,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    pointerEvents: 'auto',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
+    fontFamily: "'PP Gosha Sans', sans-serif",
+    fontWeight: 700,
+    fontSize: 12,
+    letterSpacing: 2,
+    color: '#eaf3ff',
+    background: 'rgba(9,14,22,0.6)',
+    border: `1px solid ${BORDER}`,
+    borderRadius: 999,
+    padding: '8px 16px',
+    cursor: 'pointer',
+    backdropFilter: 'blur(8px)',
+    WebkitBackdropFilter: 'blur(8px)',
+    boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+  },
+  helpDot: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 18,
+    height: 18,
+    borderRadius: 999,
+    background: '#4fd6ff',
+    color: '#062033',
+    fontFamily: 'Georgia, serif',
+    fontStyle: 'italic',
+    fontWeight: 700,
+    fontSize: 12,
+    lineHeight: 1,
+  },
+  helpCard: {
+    width: 'min(520px, 94vw)',
+    maxHeight: '88vh',
+    overflow: 'auto',
+    borderRadius: 22,
+    background: 'rgba(11,16,26,0.95)',
+    border: `1px solid ${BORDER}`,
+    boxShadow: '0 40px 120px rgba(0,0,0,0.6)',
+    padding: '26px 28px 28px',
+  },
+  helpHead: { borderBottom: '1px dashed rgba(255,255,255,0.16)', paddingBottom: 16, marginBottom: 18 },
+  helpKicker: { fontFamily: MONO, fontSize: 11, letterSpacing: 2.5, color: '#8fd4ff' },
+  helpTitle: { fontFamily: "'PP Gosha Sans', sans-serif", fontWeight: 800, fontSize: 24, color: INK, margin: '8px 0 0' },
+  helpList: { listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 15 },
+  helpItem: { display: 'flex', alignItems: 'flex-start', gap: 13 },
+  helpIcon: {
+    flex: '0 0 auto',
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 16,
+    background: 'rgba(79,214,255,0.12)',
+    border: '1px solid rgba(79,214,255,0.28)',
+  },
+  helpItemTitle: { display: 'block', fontFamily: "'PP Gosha Sans', sans-serif", fontWeight: 700, fontSize: 14.5, color: INK },
+  helpItemDesc: { display: 'block', fontSize: 13, lineHeight: 1.5, color: '#b8c5d6', marginTop: 3 },
+  helpActions: { marginTop: 22, display: 'flex', justifyContent: 'center' },
 
   // vertical tape column, centered on screen height
   tape: {
@@ -671,39 +903,39 @@ const s = {
   },
   hint: { color: '#6bffb0' },
 
-  // ---- SELECTED WORK gallery ----
+  // ---- SELECTED WORK preview gallery ----
   workWrap: {
     position: 'absolute',
     left: '50%',
-    bottom: 92,
+    bottom: 96,
     transform: 'translateX(-50%)',
     display: 'flex',
-    gap: 14,
+    gap: 18,
     transition: 'opacity 0.5s ease, transform 0.5s ease',
     willChange: 'opacity, transform',
   },
   workWrapMobile: {
-    bottom: 78,
+    bottom: 82,
     gap: 8,
-    width: 'calc(100vw - 24px)',
+    width: 'calc(100vw - 20px)',
     justifyContent: 'center',
   },
   workCard: {
     display: 'flex',
     flexDirection: 'column',
-    width: 148,
-    borderRadius: 12,
+    width: 208,
+    borderRadius: 14,
     overflow: 'hidden',
     textDecoration: 'none',
-    background: 'rgba(8,12,20,0.6)',
+    background: 'rgba(8,12,20,0.62)',
     border: `1px solid ${BORDER}`,
     backdropFilter: 'blur(10px)',
     WebkitBackdropFilter: 'blur(10px)',
-    boxShadow: '0 14px 40px rgba(0,0,0,0.4)',
+    boxShadow: '0 16px 46px rgba(0,0,0,0.44)',
   },
   workThumb: {
     position: 'relative',
-    height: 84,
+    height: 116,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -711,13 +943,166 @@ const s = {
   workThumbInitial: {
     fontFamily: "'PP Gosha Sans', sans-serif",
     fontWeight: 800,
-    fontSize: 34,
-    color: 'rgba(255,255,255,0.9)',
-    textShadow: '0 2px 10px rgba(0,0,0,0.3)',
+    fontSize: 44,
+    color: 'rgba(255,255,255,0.92)',
+    textShadow: '0 2px 12px rgba(0,0,0,0.32)',
   },
-  workMeta: { display: 'flex', flexDirection: 'column', gap: 3, padding: '9px 11px 11px' },
-  workTitle: { fontFamily: "'PP Gosha Sans', sans-serif", fontWeight: 700, fontSize: 12.5, color: INK, letterSpacing: 0.4 },
-  workTag: { fontFamily: MONO, fontSize: 9.5, letterSpacing: 1, color: '#8fd4ff' },
+  workMeta: { display: 'flex', flexDirection: 'column', gap: 4, padding: '12px 14px 14px' },
+  workTitle: { fontFamily: "'PP Gosha Sans', sans-serif", fontWeight: 700, fontSize: 14.5, color: INK, letterSpacing: 0.4 },
+  workTag: { fontFamily: MONO, fontSize: 10.5, letterSpacing: 1, color: '#8fd4ff' },
+
+  // ---- PROJECT SHOWCASE (big, clickable) ----
+  showWrap: {
+    position: 'absolute',
+    left: '50%',
+    top: '52%',
+    transform: 'translate(-50%, -50%)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 18,
+    transition: 'opacity 0.5s ease, transform 0.5s ease',
+    willChange: 'opacity, transform',
+  },
+  showWrapMobile: { width: 'calc(100vw - 20px)' },
+  showHead: {
+    fontFamily: MONO,
+    fontSize: 11,
+    letterSpacing: 3,
+    fontWeight: 700,
+    color: '#8fd4ff',
+    textShadow: '0 1px 12px rgba(0,0,0,0.4)',
+  },
+  showRow: { display: 'flex', gap: 20 },
+  showCard: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: 268,
+    textAlign: 'left',
+    padding: 0,
+    borderRadius: 18,
+    overflow: 'hidden',
+    cursor: 'pointer',
+    background: 'rgba(8,12,20,0.66)',
+    border: `1px solid ${BORDER}`,
+    backdropFilter: 'blur(12px)',
+    WebkitBackdropFilter: 'blur(12px)',
+    boxShadow: '0 22px 60px rgba(0,0,0,0.5)',
+    color: INK,
+    transition: 'transform 0.18s ease',
+  },
+  showThumb: {
+    position: 'relative',
+    height: 148,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  showThumbInitial: {
+    fontFamily: "'PP Gosha Sans', sans-serif",
+    fontWeight: 800,
+    fontSize: 58,
+    color: 'rgba(255,255,255,0.92)',
+    textShadow: '0 2px 14px rgba(0,0,0,0.3)',
+  },
+  showYear: {
+    position: 'absolute',
+    top: 10,
+    right: 12,
+    fontFamily: MONO,
+    fontSize: 11,
+    letterSpacing: 1,
+    color: '#fff',
+    background: 'rgba(0,0,0,0.32)',
+    padding: '3px 8px',
+    borderRadius: 999,
+  },
+  showMeta: { display: 'flex', flexDirection: 'column', gap: 6, padding: '14px 16px 16px' },
+  showTitle: { fontFamily: "'PP Gosha Sans', sans-serif", fontWeight: 800, fontSize: 17, color: INK, letterSpacing: 0.3 },
+  showRole: { fontFamily: MONO, fontSize: 10, letterSpacing: 1.5, color: '#9fb6cc', textTransform: 'uppercase' },
+  showSummary: { fontSize: 12.5, lineHeight: 1.5, color: '#c2cedd', marginTop: 2 },
+  showOpen: { fontFamily: MONO, fontSize: 10.5, letterSpacing: 1.5, fontWeight: 700, marginTop: 6 },
+
+  // ---- project detail modal ----
+  modalOverlay: {
+    position: 'fixed',
+    inset: 0,
+    zIndex: 40,
+    pointerEvents: 'auto',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    background: 'rgba(4,8,14,0.62)',
+    backdropFilter: 'blur(6px)',
+    WebkitBackdropFilter: 'blur(6px)',
+  },
+  modalCard: {
+    width: 'min(560px, 94vw)',
+    maxHeight: '88vh',
+    overflow: 'auto',
+    borderRadius: 22,
+    background: 'rgba(11,16,26,0.94)',
+    border: `1px solid ${BORDER}`,
+    boxShadow: '0 40px 120px rgba(0,0,0,0.6)',
+  },
+  modalCardMobile: { width: '94vw' },
+  modalBanner: {
+    position: 'relative',
+    height: 168,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalBannerInitial: {
+    fontFamily: "'PP Gosha Sans', sans-serif",
+    fontWeight: 800,
+    fontSize: 76,
+    color: 'rgba(255,255,255,0.94)',
+    textShadow: '0 2px 16px rgba(0,0,0,0.3)',
+  },
+  modalClose: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    width: 34,
+    height: 34,
+    borderRadius: 999,
+    border: '1px solid rgba(255,255,255,0.3)',
+    background: 'rgba(0,0,0,0.35)',
+    color: '#fff',
+    fontSize: 14,
+    cursor: 'pointer',
+    lineHeight: 1,
+  },
+  modalBody: { padding: '22px 26px 26px' },
+  modalKicker: { fontFamily: MONO, fontSize: 11, letterSpacing: 2, fontWeight: 700, textTransform: 'uppercase' },
+  modalTitle: { fontFamily: "'PP Gosha Sans', sans-serif", fontWeight: 800, fontSize: 26, color: INK, margin: '8px 0 12px', letterSpacing: 0.3 },
+  modalSummary: { fontSize: 15, lineHeight: 1.6, color: '#cdd8e6', margin: 0 },
+  modalList: { listStyle: 'none', padding: 0, margin: '18px 0 0', display: 'flex', flexDirection: 'column', gap: 10 },
+  modalListItem: { display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 14, color: '#dbe6f2', lineHeight: 1.45 },
+  modalBullet: { flex: '0 0 auto', width: 7, height: 7, borderRadius: 999, marginTop: 6 },
+  modalActions: { display: 'flex', alignItems: 'center', gap: 16, marginTop: 24 },
+  modalVisit: {
+    fontFamily: "'PP Gosha Sans', sans-serif",
+    fontWeight: 700,
+    fontSize: 13,
+    letterSpacing: 1.5,
+    color: '#fff',
+    background: '#0b5fb8',
+    borderRadius: 10,
+    padding: '11px 20px',
+    textDecoration: 'none',
+  },
+  modalCloseText: {
+    fontFamily: MONO,
+    fontSize: 12,
+    letterSpacing: 2,
+    color: '#9fb6cc',
+    background: 'transparent',
+    border: 0,
+    cursor: 'pointer',
+  },
   progressTrack: {
     flex: '0 1 240px',
     height: 5,
