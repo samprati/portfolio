@@ -9,7 +9,7 @@
 // Key altitudes on the Y axis (world units).
 export const GROUND_Y = 0 // runway surface
 export const CLOUD_DECK_Y = 30 // middle of the cloud layer you climb through
-export const CRUISE_Y = 54 // high above the deck — the "sea of clouds" cruise
+export const CRUISE_Y = 68 // high above the deck — the "sea of clouds" cruise
 
 // The cruise sections, shown as floating 3D typography as the camera flies
 // through each cluster. A proper portfolio arc: philosophy → experience →
@@ -23,8 +23,8 @@ export const TIMELINE = [
   {
     key: 'philosophy',
     label: 'PHILOSOPHY',
-    pos: [0, 52, -26],
-    look: [1, 53.6, -56],
+    pos: [0, 66.0, -26],
+    look: [1, 67.6, -56],
     no: '01',
     hero: 'CALM',
     title: 'How I work',
@@ -35,8 +35,8 @@ export const TIMELINE = [
   {
     key: 'kl',
     label: 'KUALA LUMPUR',
-    pos: [4, 54, -56],
-    look: [4, 53.7, -86],
+    pos: [4, 68.0, -56],
+    look: [4, 67.7, -86],
     no: '02',
     hero: '2012 — 2017',
     title: 'Where it started',
@@ -47,8 +47,8 @@ export const TIMELINE = [
   {
     key: 'servedeck',
     label: 'SERVEDECK',
-    pos: [-4, 56, -86],
-    look: [-4, 55.6, -116],
+    pos: [-4, 70.0, -86],
+    look: [-4, 69.6, -116],
     no: '03',
     hero: '2017 — 2020',
     title: 'ServeDeck',
@@ -59,8 +59,8 @@ export const TIMELINE = [
   {
     key: 'teleport',
     label: 'TELEPORT',
-    pos: [3, 57, -116],
-    look: [3, 56.6, -146],
+    pos: [3, 71.0, -116],
+    look: [3, 70.6, -146],
     no: '04',
     hero: '2020 — 2021',
     title: 'Teleport App',
@@ -71,8 +71,8 @@ export const TIMELINE = [
   {
     key: 'hitachi',
     label: 'HITACHI VANTARA',
-    pos: [-3, 54, -146],
-    look: [-3, 53.6, -176],
+    pos: [-3, 68.0, -146],
+    look: [-3, 67.6, -176],
     no: '05',
     hero: '2021 — NOW',
     title: 'Lead Product Designer',
@@ -83,8 +83,8 @@ export const TIMELINE = [
   {
     key: 'education',
     label: 'EDUCATION',
-    pos: [3, 55, -176],
-    look: [3, 54.7, -206],
+    pos: [3, 69.0, -176],
+    look: [3, 68.7, -206],
     no: '06',
     hero: 'MSc',
     title: 'Software Engineering',
@@ -95,8 +95,8 @@ export const TIMELINE = [
   {
     key: 'skills',
     label: 'SKILLS',
-    pos: [-3, 56, -206],
-    look: [-3, 55.6, -236],
+    pos: [-3, 70.0, -206],
+    look: [-3, 69.6, -236],
     no: '07',
     hero: 'TOOLKIT',
     title: 'On the flight deck',
@@ -107,8 +107,8 @@ export const TIMELINE = [
   {
     key: 'achievements',
     label: 'ACHIEVEMENTS',
-    pos: [2, 54, -236],
-    look: [2, 53.7, -266],
+    pos: [2, 68.0, -236],
+    look: [2, 67.7, -266],
     no: '08',
     hero: 'PLATINUM',
     title: 'Kaitakusha Seishin',

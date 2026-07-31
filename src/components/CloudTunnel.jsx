@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
-import { ROAD_START_Z, ROAD_END_Z, CLOUD_DECK_Y, CRUISE_Y } from '../data/timeline.js'
+import { ROAD_START_Z, ROAD_END_Z } from '../data/timeline.js'
 
 const TAU = Math.PI * 2
 
@@ -14,39 +14,41 @@ function wrap(v, min, size) {
   return min + (((v - min) % size) + size) % size
 }
 
-// A soft, irregular cloud puff drawn to a canvas so we get real alpha (the
-// clouds can then OCCLUDE the ground instead of only brightening the sky like
-// additive sprites do).
+// A puffy cumulus cloud drawn to a canvas: a cauliflower of solid white lobes
+// (biased upward so the base is flatter) with a soft blue-grey shadow graded
+// onto the underside, so it reads as a lit 3D cloud, not a fog smear.
 function makePuffTexture() {
   const size = 256
   const c = document.createElement('canvas')
   c.width = c.height = size
   const ctx = c.getContext('2d')
-  ctx.globalCompositeOperation = 'lighter'
-  const lobes = 10
-  for (let i = 0; i < lobes; i++) {
-    const ang = (i / lobes) * TAU
-    const cx = size / 2 + Math.cos(ang) * size * 0.17 * (0.4 + rand(i + 1))
-    const cy = size / 2 + Math.sin(ang) * size * 0.12 * (0.4 + rand(i + 7))
-    const r = size * 0.22 * (0.6 + rand(i + 13) * 0.8)
-    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r)
-    g.addColorStop(0, 'rgba(255,255,255,0.9)')
-    g.addColorStop(0.5, 'rgba(255,255,255,0.35)')
+
+  const blob = (x, y, r) => {
+    const g = ctx.createRadialGradient(x, y, r * 0.15, x, y, r)
+    g.addColorStop(0, 'rgba(255,255,255,1)')
+    g.addColorStop(0.68, 'rgba(255,255,255,1)')
     g.addColorStop(1, 'rgba(255,255,255,0)')
     ctx.fillStyle = g
     ctx.beginPath()
-    ctx.arc(cx, cy, r, 0, TAU)
+    ctx.arc(x, y, r, 0, TAU)
     ctx.fill()
   }
-  // solid core so overlapping puffs build a floor that hides what's behind
-  const g2 = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size * 0.46)
-  g2.addColorStop(0, 'rgba(255,255,255,0.95)')
-  g2.addColorStop(0.6, 'rgba(255,255,255,0.45)')
-  g2.addColorStop(1, 'rgba(255,255,255,0)')
-  ctx.fillStyle = g2
-  ctx.beginPath()
-  ctx.arc(size / 2, size / 2, size * 0.46, 0, TAU)
-  ctx.fill()
+  // main body + billowing top bumps
+  blob(128, 152, 66)
+  for (const [x, y, r] of [
+    [70, 124, 42], [104, 98, 52], [150, 106, 48], [190, 132, 40],
+    [128, 122, 60], [92, 146, 46], [170, 150, 44], [210, 156, 34], [46, 150, 34],
+  ]) {
+    blob(x, y, r)
+  }
+  // shade the underside (top stays bright, bottom picks up a cool shadow)
+  const sg = ctx.createLinearGradient(0, 70, 0, 232)
+  sg.addColorStop(0, 'rgba(255,255,255,0)')
+  sg.addColorStop(1, 'rgba(150,178,210,0.55)')
+  ctx.globalCompositeOperation = 'source-atop'
+  ctx.fillStyle = sg
+  ctx.fillRect(0, 0, size, size)
+  ctx.globalCompositeOperation = 'source-over'
 
   const tex = new THREE.CanvasTexture(c)
   tex.needsUpdate = true
@@ -120,25 +122,22 @@ function CloudLayer({ count, spread, length, sizeMin, sizeMax, tint, opacity, te
   )
 }
 
+// a thick cloud sea whose tops sit ~y36, well below the higher cruise (68) so
+// the far city only peeks through as tiny tops and the clouds carry the view
+const SEA = 22
+
 export default function CloudTunnel() {
   const texture = useMemo(makePuffTexture, [])
   const length = Math.abs(ROAD_END_Z - ROAD_START_Z) + 80
 
   return (
     <>
-      {/* THE SEA — a dense, wide, opaque floor of cloud tops just below cruise.
-          This is what hides the ground and sells the altitude. */}
-      <CloudLayer count={300} spread={380} length={length} sizeMin={34} sizeMax={70} tint="#f4f8fc" opacity={1} texture={texture} seedBase={5} yCenter={CLOUD_DECK_Y + 3} ySpread={7} wind={1.0} />
-      {/* bumps and billows raised on top of the sea for relief */}
-      <CloudLayer count={150} spread={340} length={length} sizeMin={20} sizeMax={46} tint="#ffffff" opacity={0.95} texture={texture} seedBase={61} yCenter={CLOUD_DECK_Y + 9} ySpread={9} wind={1.25} />
-      {/* soft grey underbellies, giving the deck some depth from below */}
-      <CloudLayer count={90} spread={340} length={length} sizeMin={30} sizeMax={60} tint="#c7d6e6" opacity={0.7} texture={texture} seedBase={131} yCenter={CLOUD_DECK_Y - 5} ySpread={8} wind={0.9} />
-
-      {/* eye-level wisps you streak through at cruise — the sense of speed */}
-      <CloudLayer count={22} spread={80} length={length} sizeMin={7} sizeMax={18} tint="#ffffff" opacity={0.5} texture={texture} seedBase={211} yCenter={CRUISE_Y} ySpread={10} wind={2.6} />
-
-      {/* high, thin cirrus far above */}
-      <CloudLayer count={18} spread={300} length={length} sizeMin={40} sizeMax={80} tint="#dbe8f5" opacity={0.2} texture={texture} seedBase={137} yCenter={CRUISE_Y + 26} ySpread={14} wind={0.4} />
+      {/* far horizon band — fills densely to the vanishing point */}
+      <CloudLayer count={360} spread={700} length={length} sizeMin={22} sizeMax={40} tint="#eef4fb" opacity={0.92} texture={texture} seedBase={311} yCenter={SEA - 2} ySpread={5} wind={0.7} />
+      {/* THE SEA — a dense white cumulus floor */}
+      <CloudLayer count={820} spread={620} length={length} sizeMin={14} sizeMax={28} tint="#ffffff" opacity={1} texture={texture} seedBase={5} yCenter={SEA} ySpread={5} wind={1.0} />
+      {/* billowing tops for structure */}
+      <CloudLayer count={480} spread={560} length={length} sizeMin={10} sizeMax={20} tint="#ffffff" opacity={1} texture={texture} seedBase={61} yCenter={SEA + 5} ySpread={6} wind={1.4} />
     </>
   )
 }

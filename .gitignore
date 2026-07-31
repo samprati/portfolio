@@ -26,3 +26,10 @@ dist-ssr
 # unused model sources (app uses public/models/city/ and grass_pbr.glb)
 /public/models/GLB format/
 /public/models/grass/grass.glb
+
+# large source images (app uses the compressed .webp versions)
+/public/profile.png
+/public/profile-pilot.png
+/public/profile.jpg
+/public/profile-opt.jpg
+/public/profile.webp.bak

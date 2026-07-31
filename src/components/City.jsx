@@ -33,8 +33,22 @@ function buildPlacements() {
   let seed = 1
   const push = (o) => items.push(o)
 
-  // downtown skylines flank each airport — close enough to read as a city, but
-  // starting past the airfield (x ≥ 52) so nothing sits on the runway
+  // a city spread FAR out on both sides of the whole route, so from cruise it
+  // reads as a small distant skyline whose tops just peek through the cloud sea
+  for (const sign of [-1, 1]) {
+    for (let i = 0; i < 260; i++) {
+      const s = seed++
+      push({
+        mi: Math.floor(rand(s * 1.3) * SUBURB.length),
+        set: 's',
+        x: sign * (220 + rand(s) * 260), // 220..480 — very far, so tops read tiny
+        z: 80 - rand(s * 1.9) * 470,
+        h: 16 + rand(s * 2.7) * 20, // tops peek through the cloud sea
+        ry: Math.floor(rand(s * 4.7) * 4) * (Math.PI / 2),
+      })
+    }
+  }
+  // taller downtown clusters near the airports, also pushed well out
   for (const cz of [DEPARTURE_Z, ARRIVAL_Z]) {
     for (const sign of [-1, 1]) {
       for (let i = 0; i < 55; i++) {
@@ -42,26 +56,12 @@ function buildPlacements() {
         push({
           mi: Math.floor(rand(s * 1.1) * DOWNTOWN.length),
           set: 'd',
-          x: sign * (95 + rand(s) * 90), // 95..185 — a distant skyline
-          z: cz - 90 + rand(s * 1.7) * 180,
-          h: 16 + rand(s * 2.3) * 24, // target height
+          x: sign * (220 + rand(s) * 200), // 220..420
+          z: cz - 100 + rand(s * 1.7) * 200,
+          h: 26 + rand(s * 2.3) * 24, // 26..50
           ry: Math.floor(rand(s * 4.3) * 4) * (Math.PI / 2),
         })
       }
-    }
-  }
-  // lower sprawl running the length of the route on both sides
-  for (const sign of [-1, 1]) {
-    for (let i = 0; i < 150; i++) {
-      const s = seed++
-      push({
-        mi: Math.floor(rand(s * 1.3) * SUBURB.length),
-        set: 's',
-        x: sign * (88 + rand(s) * 130), // 88..218
-        z: 74 - rand(s * 1.9) * 440,
-        h: 6 + rand(s * 2.7) * 11,
-        ry: Math.floor(rand(s * 4.7) * 4) * (Math.PI / 2),
-      })
     }
   }
   return items

@@ -3,51 +3,102 @@
   inset: 0;
   z-index: 100;
   overflow: hidden;
-  background: radial-gradient(120% 100% at 50% 40%, #0a1526 0%, #05070f 70%, #04060c 100%);
+  background: radial-gradient(120% 100% at 25% 40%, #0a1526 0%, #05070f 65%, #04060c 100%);
   color: #eaf3ff;
   font-family: 'PP Gosha Sans', system-ui, sans-serif;
   user-select: none;
 }
 .ls-wrap.ready { cursor: pointer; }
 
-/* cockpit HUD instruments behind everything */
-.ls-cockpit {
+/* photo on the right, fading toward the centre so it merges with the dark
+   left side where the content sits. Two stacked layers cross-fade pilot →
+   designer when the chat is clicked. */
+.ls-photo {
   position: absolute;
-  inset: 0;
-  opacity: 0.7;
-  color: #6fd6ff;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 62%;
+  background-size: cover;
+  background-position: center right;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 42%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 42%);
 }
-.ls-cockpit svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 0 3px rgba(90,205,255,0.5)); }
-.ls-hud-line { stroke: currentColor; fill: none; stroke-width: 1.6; }
-.ls-hud-line.thin { stroke-width: 1.1; opacity: 0.8; }
-.ls-hud-txt { fill: currentColor; font-family: 'SF Mono', ui-monospace, monospace; font-size: 13px; }
-.ls-scan {
+.ls-photo.top { transition: opacity 0.6s ease; }
+
+/* funny chat bubble that appears over the photo at 20% */
+.ls-chat {
+  position: absolute;
+  z-index: 3;
+  bottom: 24%;
+  right: 26%;
+  width: min(400px, 48vw);
+  padding: 22px 24px;
+  border-radius: 18px 18px 18px 4px;
+  background: rgba(255,255,255,0.97);
+  color: #1d2836;
+  box-shadow: 0 20px 56px rgba(4,20,40,0.45);
+  font-size: 15.5px;
+  line-height: 1.55;
+  pointer-events: auto;
+  animation: ls-chat-in 0.4s ease both;
+}
+/* tail on the right edge, pointing toward the pilot */
+.ls-chat::after {
+  content: '';
+  position: absolute;
+  right: -10px;
+  top: 42px;
+  border: 10px solid transparent;
+  border-left-color: rgba(255,255,255,0.97);
+  border-right: 0;
+}
+.ls-chat .who {
+  display: block;
+  font-family: 'SF Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #0b5fb8;
+  margin-bottom: 8px;
+}
+.ls-chat b { font-weight: 700; }
+.ls-chat-link {
+  display: inline;
+  border: 0;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  font-weight: 700;
+  color: #0b5fb8;
+  text-decoration: underline;
+  cursor: pointer;
+}
+@keyframes ls-chat-in { from { opacity: 0; transform: translateY(8px) scale(0.96); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 760px) {
+  .ls-chat { top: auto; bottom: 20%; right: 5%; width: min(280px, 82vw); }
+}
+/* subtle blue grade over the photo to tie it to the theme */
+.ls-photo::after {
+  content: '';
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(0deg, rgba(120,200,255,0.06) 0 1px, transparent 1px 4px);
-  mix-blend-mode: screen;
-  pointer-events: none;
+  background: linear-gradient(90deg, rgba(5,8,16,0.6), transparent 45%),
+    linear-gradient(0deg, rgba(5,8,16,0.45), transparent 40%);
 }
 
-/* light overlay — dims the HUD just enough to keep the loading UI readable */
-.ls-overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(58% 46% at 50% 50%, rgba(4,7,14,0.55), rgba(4,7,14,0.12) 70%, transparent 82%),
-    linear-gradient(180deg, rgba(4,7,14,0.35), transparent 22%, transparent 76%, rgba(4,7,14,0.5));
-}
-
-/* content */
+/* content: left column, no background */
 .ls-content {
   position: absolute;
   inset: 0;
-  z-index: 3;
+  z-index: 2;
+  --shift: clamp(24px, 11vw, 220px); /* push the left column toward the centre */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 34px 40px 40px;
+  padding: 36px 44px 40px;
+  pointer-events: none;
 }
 .ls-top {
   display: flex;
@@ -55,72 +106,65 @@
   align-items: baseline;
 }
 .ls-top .flight { font-family: 'SF Mono', ui-monospace, monospace; font-size: 13px; letter-spacing: 4px; color: #4fd6ff; }
-.ls-top .name { font-family: 'PP Gosha Sans', sans-serif; font-weight: 700; font-size: clamp(15px, 2vw, 20px); letter-spacing: 2px; }
+.ls-top .name { font-family: 'PP Gosha Sans', sans-serif; font-weight: 700; font-size: clamp(15px, 2vw, 20px); letter-spacing: 2px; text-shadow: 0 1px 10px rgba(0,0,0,0.5); }
 
 .ls-center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(560px, 88vw);
+  margin-left: var(--shift);
+  width: min(760px, 66vw);
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 22px;
 }
 .ls-num {
   display: flex;
   align-items: flex-start;
   font-family: 'SF Mono', ui-monospace, monospace;
-  line-height: 0.9;
+  line-height: 0.86;
 }
 .ls-num b {
-  font-size: clamp(96px, 18vw, 190px);
+  font-size: clamp(120px, 20vw, 260px);
   font-weight: 700;
-  letter-spacing: -4px;
+  letter-spacing: -6px;
   color: #eaf3ff;
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 50px rgba(79,214,255,0.45);
+  text-shadow: 0 0 60px rgba(79,214,255,0.35), 0 2px 24px rgba(0,0,0,0.5);
 }
-.ls-num sup { font-size: clamp(22px, 3.4vw, 40px); color: #4fd6ff; margin-top: 10px; }
-.ls-label { font-family: 'SF Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 4px; color: rgba(190,216,245,0.7); margin-top: -10px; }
+.ls-num sup { font-size: clamp(24px, 3.6vw, 44px); color: #4fd6ff; margin-top: 12px; }
+.ls-label { font-family: 'SF Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 4px; color: rgba(190,216,245,0.75); margin-top: -8px; }
 
 /* 5-section segmented bar */
-.ls-seg { display: flex; gap: 6px; width: 100%; }
-.ls-seg .s { flex: 1; height: 4px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+.ls-seg { display: flex; gap: 6px; max-width: 480px; }
+.ls-seg .s { flex: 1; height: 4px; background: rgba(255,255,255,0.14); border-radius: 3px; overflow: hidden; }
 .ls-seg .s i { display: block; height: 100%; background: linear-gradient(90deg, #2f8fef, #4fd6ff); box-shadow: 0 0 10px rgba(79,214,255,0.6); }
 
-/* checklist */
-.ls-list { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+/* checklist — plain text, no background; same width as the bars so the
+   CLEAR column lines up with the segments above */
+.ls-list { display: flex; flex-direction: column; gap: 10px; max-width: 480px; font-family: 'SF Mono', ui-monospace, monospace; }
 .ls-row {
   display: grid;
-  grid-template-columns: 30px 1fr auto;
+  grid-template-columns: 28px 1fr auto;
   align-items: center;
-  gap: 14px;
-  padding: 10px 14px;
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 9px;
-  background: rgba(8,14,24,0.4);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  transition: border-color 0.3s, background 0.3s, opacity 0.3s;
-  opacity: 0.5;
+  gap: 16px;
+  font-size: 14.5px;
+  letter-spacing: 2px;
+  opacity: 0.45;
+  transition: opacity 0.3s, color 0.3s;
+  text-shadow: 0 1px 10px rgba(0,0,0,0.55);
 }
-.ls-row .idx { font-family: 'SF Mono', ui-monospace, monospace; font-size: 12px; color: #6a8199; }
-.ls-row .lbl { font-family: 'SF Mono', ui-monospace, monospace; font-size: 13px; letter-spacing: 2px; color: #cfe0f2; }
-.ls-row .stat { font-family: 'SF Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 1.5px; color: #6a8199; }
-.ls-row.active { opacity: 1; border-color: rgba(79,214,255,0.45); }
+.ls-row .idx { color: #6a8199; }
+.ls-row .lbl { color: #cfe0f2; }
+.ls-row .stat { font-size: 11px; letter-spacing: 1.5px; color: #6a8199; }
+.ls-row.active { opacity: 1; }
 .ls-row.active .stat { color: #eaf3ff; }
 .ls-row.active .idx::after { content: ' ▸'; }
-.ls-row.done { opacity: 1; border-color: rgba(79,214,255,0.5); background: rgba(79,214,255,0.12); }
-.ls-row.done .idx { color: #4fd6ff; }
+.ls-row.done { opacity: 1; }
+.ls-row.done .idx, .ls-row.done .stat { color: #4fd6ff; }
+.ls-row.done .stat { font-weight: 700; }
 .ls-row.done .lbl { color: #eaf3ff; }
-.ls-row.done .stat { color: #4fd6ff; font-weight: 700; }
 
-/* bottom */
-.ls-bottom { display: flex; flex-direction: column; align-items: center; gap: 12px; min-height: 60px; justify-content: center; }
-.ls-status { font-family: 'SF Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 3px; color: rgba(190,216,245,0.72); }
-.ls-cta { display: flex; flex-direction: column; align-items: center; gap: 10px; animation: ls-rise 0.5s ease both; }
+.ls-bottom { pointer-events: auto; display: flex; justify-content: center; }
+.ls-status { font-family: 'SF Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 3px; color: rgba(190,216,245,0.75); text-shadow: 0 1px 10px rgba(0,0,0,0.5); }
+.ls-cta { display: inline-flex; flex-direction: column; align-items: center; gap: 10px; animation: ls-rise 0.5s ease both; }
 .ls-cta .btn {
   font-family: 'PP Gosha Sans', sans-serif;
   font-size: clamp(19px, 3.2vw, 28px);
@@ -138,3 +182,10 @@
   50% { box-shadow: 0 0 34px 6px rgba(79,214,255,0.45); transform: translateY(-2px); }
 }
 @keyframes ls-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+/* mobile: photo becomes a faded backdrop, content centred */
+@media (max-width: 760px) {
+  .ls-photo { width: 100%; opacity: 0.28; -webkit-mask-image: linear-gradient(180deg, transparent, #000 60%); mask-image: linear-gradient(180deg, transparent, #000 60%); }
+  .ls-content { padding: 28px 24px 32px; --shift: 0px; }
+  .ls-center { width: auto; }
+}
