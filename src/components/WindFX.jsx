@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react'
 
-// Wind / speed streaks: thin light lines that stream outward from a vanishing
-// point, like air rushing past the cockpit. They're faint near the centre (so
-// they never fight the text) and brighten toward the edges, and they speed up
-// whenever the flight is moving between legs. Pure 2D canvas over the scene.
+// Wind streaks: thin light lines that rush from the vanishing point straight
+// out past the edges — front-to-back, the same way you fly into the clouds. They
+// stay faint near the centre (so they never fight the text) and brighten toward
+// the edges, and they speed up whenever the flight is moving between legs. Pure
+// 2D canvas over the scene.
 export default function WindFX({ progressRef }) {
   const canvasRef = useRef(null)
 
@@ -61,7 +62,7 @@ export default function WindFX({ progressRef }) {
 
       for (const s of streaks) {
         const t0 = s.r / maxR
-        // accelerate outward — faster the further out (perspective rush)
+        // accelerate outward from the centre — front-to-back perspective rush
         s.r += s.spd * boost * dt * dpr * 620 * (0.25 + t0 * 1.6)
         if (s.r > maxR * 1.05) {
           spawn(s, true)

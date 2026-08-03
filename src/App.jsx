@@ -81,14 +81,14 @@ function App() {
         })
         tl.to(o, {
           ph: 1,
-          duration: 4.6,
+          duration: 5.6,
           ease: 'sine.inOut',
           onUpdate: () => { m.phase = o.ph; progressRef.current = fromP + (toP - fromP) * o.ph },
         })
       } else {
         p.v = progressRef.current
         tl = gsap.timeline({ onComplete: () => { legIndex = i; busy = false; navRef.current.moving = false } })
-        tl.to(p, { v: CONTENT_PROGRESS[i], duration: 2.1, ease: 'sine.inOut', onUpdate: setP })
+        tl.to(p, { v: CONTENT_PROGRESS[i], duration: 2.6, ease: 'sine.inOut', onUpdate: setP })
       }
     }
 

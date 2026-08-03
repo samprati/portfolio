@@ -1,0 +1,62 @@
+/* Animated gradient border for the glass cards — a color line that travels
+   round and round, using the same accent colors as the card's top strip. */
+@property --glass-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.glass-anim::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 3px; /* border thickness */
+  /* a bright comet sweeping over a dim colored base ring — the moving highlight
+     makes the rotation obvious (a plain symmetric gradient looked static). */
+  background:
+    conic-gradient(
+      from var(--glass-angle),
+      rgba(255, 255, 255, 0) 0deg,
+      rgba(255, 255, 255, 0) 250deg,
+      #6bffb0 305deg,
+      #eafffb 340deg,
+      #ffffff 358deg,
+      rgba(255, 255, 255, 0) 360deg
+    ),
+    conic-gradient(#6bffb0, #4fd6ff, #6a8bff, #4fd6ff, #6bffb0);
+  /* show only the ring: fill minus content-box */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: glass-spin 3s linear infinite;
+  filter: drop-shadow(0 0 5px rgba(79, 214, 255, 0.8));
+  pointer-events: none;
+  z-index: 3;
+}
+
+@keyframes glass-spin {
+  to {
+    --glass-angle: 360deg;
+  }
+}
+
+/* Fallback for browsers without @property: a gentle opacity pulse so the
+   border still feels alive even if the hue can't animate. */
+@supports not (background: conic-gradient(from var(--glass-angle), red, blue)) {
+  .glass-anim::before {
+    background: conic-gradient(#6bffb0, #4fd6ff, #6a8bff, #6bffb0);
+    animation: glass-pulse 3s ease-in-out infinite;
+  }
+  @keyframes glass-pulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-anim::before {
+    animation: none;
+  }
+}

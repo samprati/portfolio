@@ -30,7 +30,7 @@ export const TIMELINE = [
     title: 'How I work',
     kicker: 'THE PHILOSOPHY',
     quote:
-      '12+ years turning “this screen is confusing” into “oh, that’s easy.” Design-systems-first and obsessed with reuse — build the component once, use it everywhere. I bring 3–4 directions instead of one “final” answer, treat every stakeholder meeting as free research, and talk to engineers in their own language — HTML, SCSS, JavaScript.',
+      'For 12+ years I’ve turned “this screen is confusing” into “oh, that’s easy.” I refuse the obvious answer and design for the real cause, never the symptom. Systems-first and obsessed with reuse — I build a component once and use it everywhere, so consistency is structural, not manual. I bring three or four directions instead of one “final” answer, treat every stakeholder meeting as free research, and speak engineers’ language — HTML, SCSS, JavaScript — so what I design actually ships.',
   },
   {
     key: 'kl',
@@ -86,11 +86,11 @@ export const TIMELINE = [
     pos: [3, 69.0, -176],
     look: [3, 68.7, -206],
     no: '06',
-    hero: 'MSc',
-    title: 'Software Engineering',
+    hero: 'BSc (Hons)',
+    title: 'Computer Games Development',
     kicker: 'EDUCATION · 2009 — 2016',
     quote:
-      'MSc Computer Software Engineering — Staffordshire University, UK (2014–2016). BSc (Hons) Computer Games Development — Asia Pacific University, Malaysia, CGPA 3.1 (2009–2012). A build-first foundation sitting under the design.',
+      'BSc (Hons) Computer Games Development — Asia Pacific University, Malaysia (CGPA 3.1), 2009–2012 — where the build-first foundation under my design began.',
   },
   {
     key: 'skills',
@@ -102,28 +102,31 @@ export const TIMELINE = [
     title: 'On the flight deck',
     kicker: 'SKILLS · THE TOOLKIT',
     quote:
-      'Design systems & component libraries · enterprise UX · B2B SaaS · interaction design · information architecture · wireframing, prototyping, usability & A/B testing · user research · WCAG 2.2. Figma, Adobe XD, Sketch, After Effects, Miro, Jira and generative-AI workflows. HTML5, CSS/SCSS, JavaScript. Leading & mentoring 5 designers, design ops and Scrum delivery.',
+      'CRAFT — design systems & component libraries · enterprise & B2B SaaS product design · interaction design · information architecture · wireframing & user flows · prototyping · usability & A/B testing · user research (personas, journey mapping) · responsive & mobile-first · accessibility (WCAG 2.2, European Accessibility Act).\nTOOLS — Figma (advanced), FigJam, Adobe XD, Sketch, After Effects, Miro, Notion, Jira, and generative-AI workflows.\nENGINEERING — HTML5, CSS/SCSS, JavaScript, design tokens and developer handoff.\nLEADERSHIP — mentoring a team of 5, design ops & review processes, stakeholder management, agile/Scrum delivery.',
   },
   {
+    // Work leg — SkyType text suppressed (hudOnly); the HUD renders the three
+    // project cards that grow on hover and open a detail modal on click.
     key: 'work',
     label: 'SELECTED WORK',
     pos: [3, 69.0, -236],
     look: [3, 68.7, -266],
     no: '08',
-    hero: 'WORK',
-    title: 'Selected Work',
-    kicker: 'THINGS I’VE BUILT ON THE SIDE',
-    quote: 'Three projects beyond the day job — keep scrolling to open them up.',
+    hudOnly: true,
+    hero: '',
+    title: '',
+    kicker: '',
+    quote: '',
   },
   {
-    // Showcase leg — the SkyType text is suppressed for this one (showcase:true);
-    // the HUD renders the three big, clickable project cards instead.
-    key: 'work-showcase',
-    label: 'PROJECT SHOWCASE',
+    // Process leg — SkyType suppressed (hudOnly); the HUD renders a panel styled
+    // like the loading screen (checklist cards) — see PROCESS / FlightHUD.
+    key: 'process',
+    label: 'HOW I WORK',
     pos: [-3, 70.0, -266],
     look: [-3, 69.7, -296],
-    no: '08',
-    showcase: true,
+    no: '09',
+    hudOnly: true,
     hero: '',
     title: '',
     kicker: '',
@@ -134,7 +137,7 @@ export const TIMELINE = [
     label: 'ACHIEVEMENTS',
     pos: [2, 68.0, -296],
     look: [2, 67.7, -326],
-    no: '09',
+    no: '10',
     hero: 'PLATINUM',
     title: 'Kaitakusha Seishin',
     kicker: 'ACHIEVEMENTS · HITACHI AWARD',
@@ -143,23 +146,22 @@ export const TIMELINE = [
   },
 ]
 
-// The three side projects. Shown as a preview gallery on the SELECTED WORK leg
-// and as big, clickable cards on the PROJECT SHOWCASE leg — clicking opens the
-// detail modal (see FlightHUD). PLACEHOLDER content: swap `href` for the real
-// links, drop images at /work/*.webp (set `img: '/work/xxx.webp'`), and edit
-// year / role / summary / highlights to match the real projects.
+// Selected side projects — shown on the SELECTED WORK leg as cards that grow on
+// hover; clicking opens the detail modal (see FlightHUD). The first is real (the
+// Pet-Med case study, linked to the doc); swap the others for real links/images
+// (drop images at /work/*.webp and set `img: '/work/xxx.webp'`).
 export const WORKS = [
   {
-    title: 'Design System Kit',
-    tag: 'Components · Tokens',
-    year: '2023',
-    role: 'Design Systems',
-    href: '#',
+    title: 'The Missed Dose',
+    tag: 'Product Case Study',
+    year: '2025',
+    role: 'Sole Designer',
+    href: '/case_study/Pet_Med_Case_Study_Samprati.docx',
     accent: ['#0b5fb8', '#4fd6ff'],
     img: null,
     summary:
-      'A reusable component and token library built to end the redraw-the-same-button-twice problem — one source of truth for UI across products.',
-    highlights: ['80+ documented components', 'Light / dark theming via design tokens', 'Faster, cleaner developer handoff'],
+      'Rethinking pet-medication management by designing for friction, not forgetting — a shared, quiet, refill-aware care tool. Built to be scrutinised: reasoning, research and assumptions kept honestly apart.',
+    highlights: ['Reframed the core problem, not the symptom', 'Coordination without surveillance', 'Design-system-first, WCAG 2.2'],
   },
   {
     title: 'Logistics Flow Study',
@@ -187,6 +189,23 @@ export const WORKS = [
   },
 ]
 
+// "How I work" — my philosophy + the steps I run to get work done. Distilled
+// from the way I approached the Pet-Med case study. Rendered on the HOW I WORK
+// leg (see FlightHUD).
+export const PROCESS = {
+  philosophy:
+    'I refuse the obvious answer. Before designing anything I ask why the problem really happens — then design for the real cause, for the real person, and stay honest about what I know versus what I’m still assuming.',
+  steps: [
+    ['Reframe the problem', 'Challenge the default assumption and diagnose where the experience actually breaks — not the symptom everyone’s already solving.'],
+    ['Design for the real user', 'Decide who it’s truly for. That one choice rewrites every decision downstream.'],
+    ['Separate fact from assumption', 'Keep reasoning, research and flagged assumptions visibly apart — each with how I’d validate it.'],
+    ['Decide with trade-offs', 'Weigh the options, choose, and own the cost. Why over what.'],
+    ['Build the system, not screens', 'Tokens, reusable components and accessibility (WCAG 2.2) so the calm is structural, not styling.'],
+    ['Validate honestly', 'Say what I’d test and what’s still a hypothesis — knowing the difference is the job.'],
+  ],
+  caseStudy: { label: 'READ THE FULL CASE STUDY', href: '/case_study/Pet_Med_Case_Study_Samprati.docx' },
+}
+
 // Shown as a card on the departure runway, before takeoff.
 export const BOARDING = {
   flight: 'SD-2026',
@@ -198,6 +217,13 @@ export const BOARDING = {
     { code: 'BER', city: 'Berlin / Amsterdam' },
   ],
   tagline: 'Turning "this screen is confusing" into "oh, that\'s easy."',
+  bio:
+    'I lead a team of five product designers at Hitachi Vantara, shaping B2B SaaS and enterprise tools used by sales engineers worldwide. Design-systems-first and obsessed with reuse, I turn complex, data-heavy products into calm, usable experiences — and I speak engineers’ language (HTML, SCSS, JavaScript).',
+  meta: [
+    ['LOCATION', 'Hyderabad, India → Berlin / Amsterdam'],
+    ['OPEN TO', 'Lead / Senior Product Design roles'],
+    ['VISA', 'EU Blue Card · NL Highly Skilled Migrant eligible'],
+  ],
 }
 
 // Shown as a card on the arrival runway, after landing.

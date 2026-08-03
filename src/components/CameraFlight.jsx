@@ -71,32 +71,30 @@ export default function CameraFlight({ progressRef, maneuverRef }) {
       if (man.current.id !== m.id) {
         man.current = { id: m.id, curve: buildManeuver(m.from, m.to) }
       }
-      // extra ease-in/out on top of the timeline so the very start and end of
-      // the turn creep in gently instead of stepping off hard
-      const ph = THREE.MathUtils.smoothstep(THREE.MathUtils.clamp(m.phase, 0, 1), 0, 1)
+      // quintic smootherstep on top of the timeline ease → the turn creeps in
+      // and settles out very gently, no perceptible acceleration step
+      const raw = THREE.MathUtils.clamp(m.phase, 0, 1)
+      const ph = raw * raw * raw * (raw * (raw * 6 - 15) + 10)
       const curve = man.current.curve
       // arc-length parameterised → constant speed (no fast snap)
       curve.getPointAt(ph, tmpPos.current)
       curve.getTangentAt(ph, tmpAhead.current) // unit tangent — never degenerate
 
-      state.camera.position.set(
-        tmpPos.current.x + mouse.current.x * 0.12, // tiny parallax only — no jitter
-        tmpPos.current.y + driftY * 0.15,
-        tmpPos.current.z,
-      )
-      // look further along the tangent → wider, calmer sweep (less swing)
-      tmpLook.current.copy(tmpPos.current).addScaledVector(tmpAhead.current, 16)
+      // ride the curve exactly — no mouse/drift jitter during the turn
+      state.camera.position.copy(tmpPos.current)
+      // look well along the tangent → a wide, calm sweep (minimal swing)
+      tmpLook.current.copy(tmpPos.current).addScaledVector(tmpAhead.current, 20)
       // …then ease the view onto the leg's own look target through most of the
       // turn, so the destination text swings into frame early and stays readable
-      if (m.toLook && ph > 0.3) {
-        const bl = THREE.MathUtils.smoothstep(ph, 0.3, 1)
+      if (m.toLook && ph > 0.25) {
+        const bl = THREE.MathUtils.smoothstep(ph, 0.25, 1)
         tmpTurn.current.set(m.toLook[0], m.toLook[1], m.toLook[2])
         tmpLook.current.lerp(tmpTurn.current, bl)
       }
       state.camera.up.set(0, 1, 0)
       state.camera.lookAt(tmpLook.current) // pure yaw/pitch, no roll
       // gentle quaternion bank around the view axis (not Euler → no flips)
-      state.camera.rotateZ(0.26 * Math.sin(ph * Math.PI))
+      state.camera.rotateZ(0.24 * Math.sin(ph * Math.PI))
       // keep the smoother synced so normal flight resumes without a jump
       smoothed.current = THREE.MathUtils.clamp(progressRef.current, 0, 1)
       return

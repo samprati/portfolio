@@ -86,7 +86,7 @@ export default function SkyType() {
   const scale = aspect >= 1.3 ? 1 : aspect >= 0.85 ? 0.82 : 0.62
   return (
     <>
-      {TIMELINE.filter((leg) => !leg.showcase).map((leg) => (
+      {TIMELINE.filter((leg) => !leg.hudOnly).map((leg) => (
         <LegType key={leg.key} leg={leg} scale={scale} />
       ))}
     </>

@@ -34,25 +34,6 @@ export default function LoadingScreen({ onDone }) {
       <div className="ls-photo" style={{ backgroundImage: `url(${PILOT})` }} />
       <div className="ls-photo top" style={{ backgroundImage: `url(${DESIGNER})`, opacity: designer ? 1 : 0 }} />
 
-      {progress >= 20 && !designer && (
-        <div className="ls-chat" onClick={(e) => e.stopPropagation()}>
-          <span className="who">CAPTAIN SD · ON THE RECORD</span>
-          Okay, confession — <b>I'm not really a pilot</b> ✈️. Being one was the
-          childhood dream, so I'll fly you through my work. But{' '}
-          <button
-            type="button"
-            className="ls-chat-link"
-            onClick={(e) => {
-              e.stopPropagation()
-              setDesigner(true)
-            }}
-          >
-            click here
-          </button>{' '}
-          and I turn back into what I actually am — a designer.
-        </div>
-      )}
-
       <div className="ls-content">
         <div className="ls-top">
           <span className="flight">FLIGHT SD-2026</span>
@@ -83,6 +64,25 @@ export default function LoadingScreen({ onDone }) {
             })}
           </div>
         </div>
+
+        {progress >= 20 && !designer && (
+          <div className="ls-chat" onClick={(e) => e.stopPropagation()}>
+            <span className="who">CAPTAIN SD · ON THE RECORD</span>
+            Okay, confession — <b>I'm not really a pilot</b> ✈️. Being one was the
+            childhood dream, so I'll fly you through my work. But{' '}
+            <button
+              type="button"
+              className="ls-chat-link"
+              onClick={(e) => {
+                e.stopPropagation()
+                setDesigner(true)
+              }}
+            >
+              click here
+            </button>{' '}
+            and I turn back into what I actually am — a designer.
+          </div>
+        )}
 
         <div className="ls-bottom">
           {ready ? (

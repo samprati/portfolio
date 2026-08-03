@@ -3,27 +3,29 @@
 // the browser TIMEZONE (the real location signal) with locale as a fallback —
 // no network, no IP lookup, no tracking.
 
+// `visa` is the relocation / work-authorisation line, tailored to the visitor's
+// region so a recruiter reading from their country sees the relevant route in.
 const BY_COUNTRY = {
-  IN: { code: 'IND', city: 'India' },
-  AE: { code: 'DXB', city: 'Dubai' },
-  DE: { code: 'BER', city: 'Berlin' },
-  NL: { code: 'AMS', city: 'Amsterdam' },
-  GB: { code: 'LON', city: 'London' },
-  IE: { code: 'DUB', city: 'Dublin' },
-  US: { code: 'USA', city: 'United States' },
-  CA: { code: 'YYZ', city: 'Canada' },
-  SG: { code: 'SIN', city: 'Singapore' },
-  AU: { code: 'SYD', city: 'Australia' },
-  NZ: { code: 'AKL', city: 'New Zealand' },
-  MY: { code: 'KUL', city: 'Malaysia' },
-  FR: { code: 'PAR', city: 'Paris' },
-  CH: { code: 'ZRH', city: 'Zürich' },
-  SE: { code: 'STO', city: 'Stockholm' },
-  ES: { code: 'MAD', city: 'Madrid' },
-  IT: { code: 'ROM', city: 'Italy' },
-  JP: { code: 'TYO', city: 'Tokyo' },
-  SA: { code: 'RUH', city: 'Saudi Arabia' },
-  QA: { code: 'DOH', city: 'Doha' },
+  IN: { code: 'IND', city: 'India', visa: 'Indian citizen · open to remote & relocation' },
+  AE: { code: 'DXB', city: 'Dubai', visa: 'Open to UAE employment visa & relocation' },
+  SA: { code: 'RUH', city: 'Saudi Arabia', visa: 'Open to KSA employment visa & relocation' },
+  QA: { code: 'DOH', city: 'Doha', visa: 'Open to Qatar employment visa & relocation' },
+  DE: { code: 'BER', city: 'Berlin', visa: 'EU Blue Card eligible · open to sponsorship' },
+  NL: { code: 'AMS', city: 'Amsterdam', visa: 'NL Highly Skilled Migrant · open to sponsorship' },
+  FR: { code: 'PAR', city: 'Paris', visa: 'EU Blue Card eligible · open to sponsorship' },
+  CH: { code: 'ZRH', city: 'Zürich', visa: 'Swiss work permit · open to sponsorship' },
+  SE: { code: 'STO', city: 'Stockholm', visa: 'EU Blue Card eligible · open to sponsorship' },
+  ES: { code: 'MAD', city: 'Madrid', visa: 'EU Blue Card eligible · open to sponsorship' },
+  IT: { code: 'ROM', city: 'Italy', visa: 'EU Blue Card eligible · open to sponsorship' },
+  GB: { code: 'LON', city: 'London', visa: 'UK Skilled Worker visa · open to sponsorship' },
+  IE: { code: 'DUB', city: 'Dublin', visa: 'Ireland Critical Skills · open to sponsorship' },
+  US: { code: 'USA', city: 'United States', visa: 'Open to relocation · sponsorship (H-1B / O-1)' },
+  CA: { code: 'YYZ', city: 'Canada', visa: 'Canada Express Entry / work permit · open to relocation' },
+  SG: { code: 'SIN', city: 'Singapore', visa: 'Singapore Employment Pass · open to sponsorship' },
+  AU: { code: 'SYD', city: 'Australia', visa: 'Australia skilled visa · open to sponsorship' },
+  NZ: { code: 'AKL', city: 'New Zealand', visa: 'NZ skilled visa · open to sponsorship' },
+  MY: { code: 'KUL', city: 'Malaysia', visa: 'Malaysia Employment Pass · open to relocation' },
+  JP: { code: 'TYO', city: 'Tokyo', visa: 'Japan work visa · open to relocation' },
 }
 
 // common IANA timezones → country (the primary, reliable signal)
@@ -49,7 +51,7 @@ const BY_TZ = {
 }
 
 // where Samprati is actually heading — used when we can't place the visitor
-const DEFAULT = { code: 'BER', city: 'Berlin / Amsterdam' }
+const DEFAULT = { code: 'BER', city: 'Berlin / Amsterdam', visa: 'EU Blue Card · NL Highly Skilled Migrant eligible' }
 
 function countryFromTimeZone() {
   let tz = ''
@@ -75,5 +77,15 @@ function countryFromLocale() {
 export function getDestination() {
   // timezone first (where you actually are), locale second (often just en-US)
   const country = countryFromTimeZone() || countryFromLocale()
-  return (country && BY_COUNTRY[country]) || DEFAULT
+  const base = (country && BY_COUNTRY[country]) || DEFAULT
+  const isHome = country === 'IN'
+  return {
+    ...base,
+    isHome,
+    // the "LOCATION" line: Samprati is in Hyderabad, heading to the visitor's
+    // region (or already local for India visitors)
+    locationLine: isHome ? 'Hyderabad, India · available locally' : `Hyderabad, India → ${base.city}`,
+    // label for the relocation/visa row (India visitors see a status, not a visa)
+    visaLabel: isHome ? 'STATUS' : 'VISA',
+  }
 }

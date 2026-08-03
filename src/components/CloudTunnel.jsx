@@ -4,6 +4,8 @@ import { useFrame } from '@react-three/fiber'
 import { ROAD_START_Z, ROAD_END_Z } from '../data/timeline.js'
 
 const TAU = Math.PI * 2
+// how fast the cloud sea streams toward the camera (world units/sec, × layer wind)
+const Z_FLOW = 4
 
 function rand(seed) {
   const x = Math.sin(seed) * 10000
@@ -79,7 +81,7 @@ function CloudLayer({ count, spread, length, sizeMin, sizeMax, tint, opacity, te
   )
 
   const refs = useRef([])
-  const xMin = -spread / 2
+  const zMin = ROAD_START_Z - length
 
   useFrame((state) => {
     const t = state.clock.elapsedTime
@@ -87,8 +89,11 @@ function CloudLayer({ count, spread, length, sizeMin, sizeMax, tint, opacity, te
       const sp = refs.current[i]
       if (!sp) continue
       const p = puffs[i]
-      const drift = wind * t + Math.sin(t * p.driftSpeed + p.phase) * p.driftAmp
-      sp.position.x = wrap(p.x + drift, xMin, spread)
+      // stream from the front (far, -z) toward the back (+z, past the camera),
+      // so it feels like flying into the clouds. Higher layers flow faster =
+      // parallax depth. A small x-sway keeps it alive.
+      sp.position.z = wrap(p.z + wind * Z_FLOW * t, zMin, length)
+      sp.position.x = p.x + Math.sin(t * p.driftSpeed + p.phase) * p.driftAmp
       sp.position.y = p.y + Math.sin(t * p.bobSpeed + p.phase * 1.7) * p.bobAmp
       sp.material.rotation = p.rot + t * p.rotSpeed
       const sc = p.scale * (1 + Math.sin(t * p.breatheSpeed + p.phase) * 0.04)

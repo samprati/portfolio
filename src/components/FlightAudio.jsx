@@ -44,9 +44,13 @@ export default function FlightAudio({ progressRef }) {
       const p = clamp01(progressRef.current)
       const live = onRef.current
 
+      // fades everything to silence as we settle onto the runway (p → 1)
+      const landFade = clamp01((1 - p) / (1 - END))
       const tT = p <= 0.012 ? 0 : Math.min(1, p / (START * 0.25)) * clamp01((START - p) / (START * 0.35))
-      const tC = Math.max(AMBIENT_FLOOR, clamp01((p - START * 0.55) / (START * 0.45)) * clamp01((1 - p) / (1 - END)))
-      const tL = clamp01((p - END) / ((1 - END) * 0.4))
+      // cruise bed + ambient floor, but the floor also fades out during landing
+      const tC = Math.max(AMBIENT_FLOOR * landFade, clamp01((p - START * 0.55) / (START * 0.45)) * landFade)
+      // landing roar swells on descent, then dies out at touchdown (no loop after landing)
+      const tL = clamp01((p - END) / ((1 - END) * 0.35)) * clamp01((1 - p) / ((1 - END) * 0.25))
 
       const mul = live ? MASTER : 0
       vol.t += (tT * mul - vol.t) * 0.07
