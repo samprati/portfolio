@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Blind Spot — Think Alongside Me · Samprati Dash</title>
+<style>
+  :root{
+    --bg:#070b12; --panel:#0e1622; --panel2:#131f30; --raise:#18263a;
+    --line:rgba(255,255,255,0.09); --line2:rgba(255,255,255,0.16);
+    --text:#eaf3ff; --muted:#93a7c0; --faint:#63758e;
+    --cyan:#4fd6ff; --blue:#6a8bff; --mint:#6bffb0; --amber:#f0b23c;
+    --red:#ff6b6b; --green:#2fd08a;
+    --shadow:0 20px 50px rgba(2,8,20,0.5);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:
+      radial-gradient(120% 70% at 82% -8%, rgba(79,214,255,0.10), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:'PP Gosha Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'SF Mono',ui-monospace,'Roboto Mono',Menlo,monospace}
+  .wrap{max-width:820px; margin:0 auto; padding:0 24px}
+  a{color:var(--cyan)}
+
+  /* reveal on scroll */
+  .rv{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease}
+  .rv.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion:reduce){ .rv{opacity:1; transform:none; transition:none} }
+
+  /* progress bar */
+  .prog{position:fixed; top:0; left:0; height:3px; width:0; z-index:50;
+    background:linear-gradient(90deg,var(--cyan),var(--blue),var(--mint))}
+
+  /* hero */
+  header.hero{padding:88px 0 34px; position:relative}
+  .kicker{font-family:'SF Mono',monospace; font-size:12px; letter-spacing:3px; text-transform:uppercase; color:var(--cyan); font-weight:700}
+  h1{font-size:clamp(32px,6vw,60px); line-height:1.03; letter-spacing:-1.4px; margin:16px 0 14px; font-weight:800; text-wrap:balance}
+  .lede{font-size:clamp(17px,2.4vw,21px); color:var(--muted); max-width:60ch}
+  .lede b{color:var(--text)}
+  .backlink{display:inline-block; margin-top:26px; font-size:13px; letter-spacing:1px; color:var(--muted); text-decoration:none; border-bottom:1px solid var(--line2); padding-bottom:2px}
+
+  /* honesty banner */
+  .honesty{display:flex; gap:14px; align-items:flex-start; background:var(--panel);
+    border:1px solid var(--line); border-left:3px solid var(--mint); border-radius:12px;
+    padding:16px 18px; margin:26px 0 8px; font-size:14px; color:var(--muted)}
+  .honesty b{color:var(--text)}
+  .honesty .ic{color:var(--mint); font-size:18px; line-height:1.3}
+
+  section{padding:30px 0; border-top:1px solid var(--line); margin-top:26px}
+  section:first-of-type{border-top:0}
+  .slab{font-family:'SF Mono',monospace; font-size:12px; letter-spacing:2.5px; text-transform:uppercase; color:var(--cyan); font-weight:700}
+  h2{font-size:clamp(23px,3.6vw,34px); letter-spacing:-0.5px; margin:8px 0 12px; font-weight:800; text-wrap:balance}
+  h3{font-size:19px; margin:26px 0 8px; color:var(--text)}
+  p{margin:0 0 16px; color:#cdddf0}
+  strong{color:var(--text)}
+  em{color:var(--cyan); font-style:normal}
+  ul{margin:0 0 18px; padding-left:0; list-style:none}
+  ul li{position:relative; padding-left:24px; margin-bottom:10px; color:#cdddf0}
+  ul li::before{content:''; position:absolute; left:4px; top:12px; width:7px; height:7px; border-radius:50%; background:var(--cyan)}
+
+  .label{display:inline-block; font-family:'SF Mono',monospace; font-size:10.5px; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--faint); border:1px solid var(--line); border-radius:999px; padding:4px 10px; margin-bottom:12px}
+  .honlabel{border-color:rgba(107,255,176,0.3); color:var(--mint)}
+
+  /* cold open */
+  .chair{background:linear-gradient(180deg,#0b1220,#0a0f18); border:1px solid var(--line); border-radius:18px; padding:30px; box-shadow:var(--shadow); display:grid; grid-template-columns:1.3fr 1fr; gap:26px; align-items:center}
+  .chair .msg{font-size:clamp(19px,3vw,26px); line-height:1.4; font-weight:600; margin:0}
+  .chair .msg span{color:var(--cyan)}
+  .wa{margin-top:18px; background:var(--panel2); border:1px solid var(--line); border-radius:12px 12px 12px 4px; padding:12px 15px; max-width:320px}
+  .wa .who{font-size:11px; letter-spacing:1px; color:var(--mint); font-family:'SF Mono',monospace}
+  .wa .txt{margin:4px 0 0; font-size:15px}
+  .wa .time{display:block; margin-top:6px; font-size:11px; color:var(--faint); font-family:'SF Mono',monospace}
+  .blurpic{position:relative; aspect-ratio:4/3; border-radius:14px; overflow:hidden; border:1px solid var(--line);
+    background:conic-gradient(from 210deg at 60% 40%, #24384f, #16222f, #1d2c3e, #24384f); filter:blur(7px)}
+  .blurwrap{position:relative}
+  .blurwrap .q{position:absolute; inset:0; display:grid; place-items:center; font-size:44px; color:rgba(255,255,255,0.55); font-weight:800}
+  .blurwrap .cap{position:absolute; bottom:8px; left:0; right:0; text-align:center; font-size:12px; color:var(--muted); font-family:'SF Mono',monospace}
+
+  /* competitor cards */
+  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:22px 0}
+  .flip{perspective:1000px; height:180px; cursor:pointer}
+  .flip-in{position:relative; width:100%; height:100%; transition:transform .55s; transform-style:preserve-3d}
+  .flip.on .flip-in{transform:rotateY(180deg)}
+  .face{position:absolute; inset:0; backface-visibility:hidden; border:1px solid var(--line); border-radius:14px; padding:18px; display:flex; flex-direction:column; justify-content:space-between; background:var(--panel)}
+  .face .t{font-size:12px; letter-spacing:1.5px; color:var(--faint); font-family:'SF Mono',monospace}
+  .face .h{font-size:17px; font-weight:800; color:var(--text)}
+  .face .p{font-size:13px; color:var(--muted)}
+  .face.back{transform:rotateY(180deg); background:var(--panel2); border-color:rgba(79,214,255,0.28)}
+  .face.back .h{color:var(--cyan)}
+  .flip .hint{font-size:11px; color:var(--faint)}
+
+  /* interactive widget shell */
+  .widget{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px 22px 24px; box-shadow:var(--shadow); margin:22px 0}
+  .wtitle{font-size:13px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-family:'SF Mono',monospace; margin-bottom:16px}
+
+  /* decision engine */
+  .eng-row{display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:6px}
+  .eng-freq{font-size:22px; font-weight:800}
+  input[type=range]{width:100%; accent-color:var(--cyan); margin:14px 0 4px}
+  .ticks{display:flex; justify-content:space-between; font-size:11px; color:var(--faint); font-family:'SF Mono',monospace}
+  .eng-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:22px 0 6px}
+  .stat{background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:14px}
+  .stat .k{font-size:11px; letter-spacing:1px; color:var(--faint); font-family:'SF Mono',monospace; text-transform:uppercase}
+  .stat .v{font-size:24px; font-weight:800; margin-top:4px; font-variant-numeric:tabular-nums}
+  .bar{height:12px; border-radius:8px; background:var(--panel2); border:1px solid var(--line); overflow:hidden; margin-top:8px}
+  .bar i{display:block; height:100%; width:0; transition:width .35s ease, background .35s ease}
+  .verdict{margin-top:16px; font-weight:700; font-size:15px}
+  .toggle{display:inline-flex; background:var(--panel2); border:1px solid var(--line); border-radius:999px; padding:4px; gap:4px; margin:6px 0 4px}
+  .toggle button{border:0; background:none; color:var(--muted); font:inherit; font-size:13px; font-weight:700; padding:7px 16px; border-radius:999px; cursor:pointer; transition:.2s}
+  .toggle button.on{background:var(--cyan); color:#04121e}
+  .gapfill{margin-top:14px; background:var(--panel2); border:1px solid var(--line); border-left:3px solid var(--mint); border-radius:10px; padding:12px 14px; font-size:14px}
+  .gapfill .chip{display:inline-block; font-size:11px; font-family:'SF Mono',monospace; letter-spacing:1px; color:var(--mint); border:1px solid rgba(107,255,176,0.3); border-radius:999px; padding:2px 9px; margin-right:8px}
+
+  /* status card (role/state) */
+  .statuscard{background:linear-gradient(160deg,var(--panel2),var(--panel)); border:1px solid var(--line2); border-radius:16px; padding:20px; max-width:360px; margin:16px auto 0}
+  .sc-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px}
+  .sc-addr{font-weight:800; font-size:16px}
+  .sc-role{font-size:10.5px; font-family:'SF Mono',monospace; letter-spacing:1.5px; color:var(--faint); text-transform:uppercase}
+  .sc-health{display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:700; padding:6px 12px; border-radius:999px}
+  .sc-body{margin-top:14px; font-size:14px; color:#cdddf0; min-height:64px}
+  .sc-primary{margin-top:16px; display:block; width:100%; text-align:center; background:var(--cyan); color:#04121e; font-weight:800; border:0; border-radius:10px; padding:12px; font:inherit; font-weight:800; cursor:pointer}
+  .sc-primary.ghost{background:transparent; color:var(--cyan); border:1px solid rgba(79,214,255,0.4)}
+  .dot{width:9px; height:9px; border-radius:50%; display:inline-block}
+
+  /* A/B + B2C/B2B mock */
+  .mock{background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:16px; margin-top:14px}
+  .tl-item{display:flex; gap:12px; align-items:center; padding:9px 0; border-bottom:1px solid var(--line)}
+  .tl-item:last-child{border-bottom:0}
+  .tl-thumb{width:44px; height:34px; border-radius:6px; background:conic-gradient(from 200deg,#26405a,#16222f,#22364a); flex:0 0 auto}
+  .tl-item .d{font-size:11px; color:var(--faint); font-family:'SF Mono',monospace}
+  .tl-item .l{font-size:13.5px}
+  table.grid{width:100%; border-collapse:collapse; font-size:12.5px; font-family:'SF Mono',monospace}
+  table.grid th,table.grid td{text-align:left; padding:7px 8px; border-bottom:1px solid var(--line)}
+  table.grid th{color:var(--faint); font-weight:600; font-size:11px; letter-spacing:1px}
+  .rag{width:9px; height:9px; border-radius:50%; display:inline-block}
+
+  /* callouts */
+  .why{background:#0c1826; border:1px solid var(--line); border-left:4px solid var(--mint); border-radius:12px; padding:16px 18px; margin:18px 0; font-size:15px; color:#dbe6f2}
+  .why b{color:var(--mint)}
+  .decision{background:#1a1410; border:1px solid rgba(240,178,60,0.24); border-left:4px solid var(--amber); border-radius:12px; padding:16px 18px; margin:18px 0; font-size:15px}
+  .decision .tag{display:block; font-size:11px; letter-spacing:2px; font-weight:700; color:var(--amber); margin-bottom:6px; font-family:'SF Mono',monospace}
+
+  footer{border-top:1px solid var(--line); margin-top:40px; padding:34px 0 70px; color:var(--faint); font-size:14px}
+  footer a{font-weight:700}
+
+  @media (max-width:680px){
+    .chair{grid-template-columns:1fr}
+    .cards{grid-template-columns:1fr}
+    .eng-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="prog" id="prog"></div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero rv">
+    <div class="kicker">Case Study · PropTech Service Design · Interactive</div>
+    <h1>The Blind Spot</h1>
+    <p class="lede">Most property apps sell you a <b>transaction</b>. For an owner who can't see their asset, the real product is <b>proof</b>. This isn't a case study you read — it's one you <b>operate</b>. Make the calls I made.</p>
+    <a class="backlink" href="/">← Back to the flight</a>
+  </header>
+
+  <div class="honesty rv">
+    <span class="ic">◆</span>
+    <div><b>A note on honesty.</b> This is a self-initiated concept grounded in desk research and market analysis of Indian PropTech — not a shipped product. Throughout, I keep three things separate: my <b>design reasoning</b> (mine), <b>market facts</b> (secondary), and <b>assumptions</b> (flagged, each with how I'd test it). The numbers in the model below are illustrative — drag them to see the <em>logic</em>, not audited figures.</div>
+  </div>
+
+  <!-- BEAT 1 — OWNER'S CHAIR -->
+  <section class="rv">
+    <div class="slab">Beat 1 · You are the owner</div>
+    <h2>You can't see the thing you're paying to protect.</h2>
+    <div class="chair">
+      <div>
+        <p class="msg">Your flat. Pune. You live <span>6,000&nbsp;km</span> away. Is there a leak behind the wall right now? Have the society dues gone up? Is anyone even living there?</p>
+        <div class="wa">
+          <span class="who">SOCIETY GROUP · WhatsApp</span>
+          <p class="txt">all ok 👍</p>
+          <span class="time" id="waTime">— 87 days ago</span>
+        </div>
+        <p style="margin-top:16px; color:var(--muted)"><strong>You have no idea. And that's not a payment problem.</strong></p>
+      </div>
+      <div class="blurwrap">
+        <div class="blurpic"></div>
+        <div class="q">?</div>
+        <div class="cap">last known photo</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEAT 2 — WHAT EVERYONE SELLS -->
+  <section class="rv">
+    <div class="slab">Beat 2 · What the market hands you</div>
+    <h2>Everyone sells the transaction. You asked about trust.</h2>
+    <p>So you look for help. Here's what exists — tap each to see what it <em>actually</em> answers.</p>
+    <div class="cards" id="cards">
+      <div class="flip"><div class="flip-in">
+        <div class="face"><span class="t">CATEGORY</span><span class="h">Rent-collection app</span><span class="hint">tap to flip →</span></div>
+        <div class="face back"><span class="t">WHAT IT ANSWERS</span><span class="p">“Did the money arrive?” — a problem you didn't have. The rent was never the hard part.</span></div>
+      </div></div>
+      <div class="flip"><div class="flip-in">
+        <div class="face"><span class="t">CATEGORY</span><span class="h">Re-letting marketplace</span><span class="hint">tap to flip →</span></div>
+        <div class="face back"><span class="t">WHAT IT ANSWERS</span><span class="p">“Find a new tenant fast.” It assumes the flat is the asset. The <em>trust</em> is the asset.</span></div>
+      </div></div>
+      <div class="flip"><div class="flip-in">
+        <div class="face"><span class="t">CATEGORY</span><span class="h">Payment gateway</span><span class="hint">tap to flip →</span></div>
+        <div class="face back"><span class="t">WHAT IT ANSWERS</span><span class="p">A better funnel — for a wound that was never financial. Wrong tool, wrong wall.</span></div>
+      </div></div>
+    </div>
+    <div class="decision">
+      <span class="tag">THE REFRAME</span>
+      Every one is built on the same unexamined assumption: the job is the <strong>transaction</strong>. For a remote owner, the transaction is the easy part. The job is <strong>verifying the health of something you can't see.</strong>
+    </div>
+  </section>
+
+  <!-- BEAT 3 — DECISION ENGINE -->
+  <section class="rv">
+    <div class="slab">Beat 3 · The decision engine</div>
+    <h2>Make the call I made. Watch the business break.</h2>
+    <p>I nearly designed the obvious thing: send someone every couple of days. Maximum reassurance. Try it — drag the frequency and watch the margin.</p>
+
+    <div class="widget">
+      <span class="label honlabel">Illustrative model — my assumptions, not audited figures</span>
+      <div class="eng-row">
+        <div class="eng-freq" id="freqLabel">Every 2 days</div>
+        <div class="mono" style="color:var(--muted); font-size:13px">agent cost: ₹450 / visit · owner pays: ₹1,499 / mo</div>
+      </div>
+      <input type="range" id="freq" min="0" max="4" value="0" step="1" />
+      <div class="ticks"><span>2 days</span><span>Weekly</span><span>Fortnightly</span><span>Monthly</span><span>Quarterly</span></div>
+
+      <div class="eng-grid">
+        <div class="stat"><div class="k">Visits / month</div><div class="v" id="visits">~15</div></div>
+        <div class="stat"><div class="k">Agent cost / mo</div><div class="v" id="cost">₹6,750</div></div>
+        <div class="stat"><div class="k">Margin</div><div class="v" id="margin" style="color:var(--red)">−350%</div></div>
+      </div>
+      <div class="bar"><i id="marginBar"></i></div>
+      <div class="verdict" id="verdict" style="color:var(--red)">🔴 Every visit loses money. This model is a countdown.</div>
+
+      <div style="margin-top:22px; border-top:1px solid var(--line); padding-top:16px">
+        <div class="mono" style="font-size:12px; color:var(--faint); letter-spacing:1px; text-transform:uppercase; margin-bottom:8px">Between scheduled visits, the gap-filler depends on the unit</div>
+        <div class="toggle" id="stateToggle">
+          <button data-state="vacant" class="on">Vacant</button>
+          <button data-state="tenanted">Tenanted</button>
+        </div>
+        <div class="gapfill" id="gapfill">
+          <span class="chip">ON-DEMAND</span> No one's there to signal — so the owner can trigger an <strong>extra paid visit</strong> in one tap (“storm in Pune, send someone”). Revenue-positive, zero hardware.
+        </div>
+      </div>
+    </div>
+
+    <div class="why"><b>Why over what:</b> You just watched my favourite idea die — and so did I. A service that can't afford to keep its promise isn't kind; it's a countdown. The pivot wasn't a feature. It was accepting the math: <strong>sustainable tiered cadence</strong>, with the gap covered by people already in the loop.</div>
+  </section>
+
+  <!-- BEAT 4 — RESTRAINT -->
+  <section class="rv">
+    <div class="slab">Beat 4 · The restraint decision</div>
+    <h2>The system chooses the safety net. The owner sees one thing.</h2>
+    <p>With the economics fixed, the temptation was to hand the owner every safety net — check-ins, on-demand, scheduled visits — and call it “powerful.” That's not power. It's decision fatigue and cost. So I bound each safety net to <em>unit state</em> and let the system choose. Flip the state — same card, one clear action:</p>
+
+    <div class="toggle" id="restraintToggle" style="margin-top:6px">
+      <button data-r="vacant" class="on">Vacant flat</button>
+      <button data-r="tenanted">Tenanted flat</button>
+    </div>
+
+    <div class="statuscard" id="restraintCard">
+      <div class="sc-top">
+        <span class="sc-addr">A-1203, Pune</span>
+        <span class="sc-role">Owner view</span>
+      </div>
+      <span class="sc-health" id="rHealth" style="background:rgba(47,208,138,0.14); color:var(--green)"><span class="dot" style="background:var(--green)"></span> Healthy</span>
+      <div class="sc-body" id="rBody">Empty unit · last inspected 6 days ago · next visit in 24 days.</div>
+      <button class="sc-primary" id="rPrimary">Request an on-demand visit</button>
+    </div>
+    <div class="why" style="margin-top:18px"><b>Restraint was the design.</b> All three ideas are in the product — but the owner never manages a menu of them. That's the difference between “more features” and a system.</div>
+  </section>
+
+  <!-- BEAT 5 — A/B FORK -->
+  <section class="rv">
+    <div class="slab">Beat 5 · Wireframe → the fork</div>
+    <h2>How do you show an anxious owner their asset is fine?</h2>
+    <p>Past the low-fi, the real question was the dashboard. I built two hi-fi directions. Flip between them:</p>
+    <div class="toggle" id="abToggle">
+      <button data-ab="a" class="on">A · Image-first timeline</button>
+      <button data-ab="b">B · Data grid</button>
+    </div>
+    <div id="abMock"></div>
+    <div class="why"><b>Why over what:</b> my criteria weren't “which is prettier” — they were <strong>reassurance, cognitive load, and glanceability for a stressed non-expert</strong>. On those, A wins for the individual owner. Photos are proof; a timeline is a heartbeat.
+    <span class="label honlabel" style="margin:10px 0 0; display:inline-block">Chosen on stated design criteria — not on user testing I didn't run</span></div>
+  </section>
+
+  <!-- BEAT 6 — ARGUE AGAINST MYSELF -->
+  <section class="rv">
+    <div class="slab">Beat 6 · The case against my own choice</div>
+    <h2>The version I rejected is better — for someone else.</h2>
+    <p>Now let me argue against myself. Version B, the grid I rejected, is <em>genuinely better</em> for a landlord holding 50 units who needs triage, not comfort. Killing it outright would've been a mistake — so I didn't. I moved it to the B2B view. Same data model, different surface, chosen by <strong>who's looking</strong>:</p>
+    <div class="toggle" id="segToggle">
+      <button data-seg="b2c" class="on">B2C · one anxious owner</button>
+      <button data-seg="b2b">B2B · 50-unit portfolio</button>
+    </div>
+    <div id="segMock"></div>
+    <div class="why"><b>The seam I defend:</b> one product, two vantages. The rejected design wasn't wrong — it was pointed at the wrong user. Reassurance for the individual; triage for the institution.</div>
+  </section>
+
+  <!-- BEAT 7 — OPERATE THE SYSTEM -->
+  <section class="rv">
+    <div class="slab">Beat 7 · Operate the system</div>
+    <h2>One component. Three roles. Three truths.</h2>
+    <p>A product this multi-sided is a <strong>design-system</strong> achievement, not a styling one. A single “Property Status Card” renders financial yield to the owner, but only maintenance status to the tenant, and a checklist to the agent — the logic lives in the component, not in three forked front-ends. Switch the role:</p>
+    <div class="toggle" id="roleToggle">
+      <button data-role="owner" class="on">Owner</button>
+      <button data-role="tenant">Tenant</button>
+      <button data-role="agent">Agent</button>
+    </div>
+    <div class="statuscard" id="roleCard">
+      <div class="sc-top"><span class="sc-addr">A-1203, Pune</span><span class="sc-role" id="scRole">Owner view</span></div>
+      <span class="sc-health" id="scHealth"></span>
+      <div class="sc-body" id="scBody"></div>
+      <button class="sc-primary" id="scPrimary"></button>
+    </div>
+    <div class="why"><b>Consistency by structure, not discipline.</b> Three surfaces from one source of truth. The B2C surfaces target <strong>WCAG&nbsp;2.2</strong> — high contrast, generous type, large targets — because some absentee owners are elderly and acting under stress.</div>
+  </section>
+
+  <!-- BEAT 8 — BEYOND + VALIDATION -->
+  <section class="rv">
+    <div class="slab">Beat 8 · Beyond the happy path &amp; validation</div>
+    <h2>The scenarios real life throws — and what I'd test.</h2>
+    <ul>
+      <li><strong>The agent with no signal:</strong> inspections happen in basements and unoccupied towers. Capture caches offline and syncs when it can — it can never depend on a good connection.</li>
+      <li><strong>The disputed repair:</strong> when owner and tenant disagree on a cost, the geotagged photo trail is the neutral record. The product takes no side — it shows the evidence.</li>
+      <li><strong>Tenant privacy:</strong> “eyes on the ground” must never feel like surveillance of an occupied home. Inspections of tenanted units are scheduled, consented, and scoped — the owner sees the asset's condition, not the tenant's life.</li>
+    </ul>
+    <h3>Three hypotheses that carry the whole architecture</h3>
+    <ul>
+      <li><strong>Unit economics:</strong> can an agent complete a standard inspection in <strong>≤ ~15 min</strong> — the threshold that keeps the model profitable?</li>
+      <li><strong>Visual reassurance:</strong> do remote owners report a measurable anxiety drop from the image feed vs. an emailed PDF report?</li>
+      <li><strong>B2B scalability:</strong> can the dashboard surface one neglected unit inside a 50+ portfolio without overwhelming the user?</li>
+    </ul>
+    <div class="why">The most useful thing I did was refuse the obvious solution — and be willing to kill my own favourite idea when the economics didn't hold. The honest limit is equally clear: without primary research this is a well-reasoned hypothesis, not a validated product. Knowing which is which is the job.</div>
+    <p style="color:var(--muted); font-style:italic">I built this to be scrutinised. Ask me why I rejected an option, or push on a trade-off I accepted — those are the conversations this is designed to start.</p>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">Samprati Dash — Lead Product Designer · <a href="/">Back to the portfolio</a></div>
+</footer>
+
+<script>
+  // progress bar + reveal on scroll
+  const prog = document.getElementById('prog')
+  const onScroll = () => {
+    const h = document.documentElement
+    const p = h.scrollTop / (h.scrollHeight - h.clientHeight || 1)
+    prog.style.width = (p * 100) + '%'
+  }
+  document.addEventListener('scroll', onScroll, { passive: true }); onScroll()
+
+  const io = new IntersectionObserver((es) => {
+    es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } })
+  }, { threshold: 0.12 })
+  document.querySelectorAll('.rv').forEach(el => io.observe(el))
+
+  // Beat 1 — ticking counter
+  let days = 87
+  const waTime = document.getElementById('waTime')
+  setInterval(() => { days++; waTime.textContent = '— ' + days + ' days ago' }, 4000)
+
+  // Beat 2 — flip cards
+  document.querySelectorAll('#cards .flip').forEach(f => f.addEventListener('click', () => f.classList.toggle('on')))
+
+  // Beat 3 — decision engine
+  const COST = 450, SUB = 1499
+  const TIERS = [
+    { label: 'Every 2 days', visits: 15 },
+    { label: 'Weekly', visits: 4 },
+    { label: 'Fortnightly', visits: 2 },
+    { label: 'Monthly', visits: 1 },
+    { label: 'Quarterly', visits: 0.33 },
+  ]
+  const freq = document.getElementById('freq')
+  const inr = n => '₹' + Math.round(n).toLocaleString('en-IN')
+  function renderEngine() {
+    const t = TIERS[+freq.value]
+    const cost = t.visits * COST
+    const margin = Math.round((SUB - cost) / SUB * 100)
+    document.getElementById('freqLabel').textContent = t.label
+    document.getElementById('visits').textContent = (t.visits < 1 ? '~0.3' : '~' + t.visits)
+    document.getElementById('cost').textContent = inr(cost)
+    const mEl = document.getElementById('margin')
+    mEl.textContent = margin + '%'
+    const bar = document.getElementById('marginBar')
+    const verdict = document.getElementById('verdict')
+    if (margin >= 0) {
+      mEl.style.color = 'var(--green)'
+      bar.style.background = 'var(--green)'
+      bar.style.width = Math.min(100, margin) + '%'
+      verdict.style.color = 'var(--green)'
+      verdict.textContent = '🟢 Sustainable. The promise can afford to keep itself — with on-demand extras (₹499) on top.'
+    } else {
+      mEl.style.color = 'var(--red)'
+      bar.style.background = 'var(--red)'
+      bar.style.width = Math.min(100, Math.abs(margin)) + '%'
+      verdict.style.color = 'var(--red)'
+      verdict.textContent = '🔴 Every visit loses money. This model is a countdown.'
+    }
+  }
+  freq.addEventListener('input', renderEngine); renderEngine()
+
+  // Beat 3 — gap-filler by state
+  const gapfill = document.getElementById('gapfill')
+  document.querySelectorAll('#stateToggle button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#stateToggle button').forEach(x => x.classList.remove('on'))
+    b.classList.add('on')
+    gapfill.innerHTML = b.dataset.state === 'vacant'
+      ? '<span class="chip">ON-DEMAND</span> No one\'s there to signal — so the owner can trigger an <strong>extra paid visit</strong> in one tap (“storm in Pune, send someone”). Revenue-positive, zero hardware.'
+      : '<span class="chip">TENANT CHECK-IN</span> Someone\'s already there — the tenant submits a <strong>2-tap photo/status</strong> between visits. Free signal; scheduled, consented, privacy-scoped.'
+  }))
+
+  // Beat 4 — restraint card by state
+  const rBody = document.getElementById('rBody'), rPrimary = document.getElementById('rPrimary')
+  document.querySelectorAll('#restraintToggle button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#restraintToggle button').forEach(x => x.classList.remove('on'))
+    b.classList.add('on')
+    if (b.dataset.r === 'vacant') {
+      rBody.textContent = 'Empty unit · last inspected 6 days ago · next visit in 24 days.'
+      rPrimary.textContent = 'Request an on-demand visit'
+    } else {
+      rBody.textContent = 'Occupied · tenant checked in 2 days ago (photos ✓) · next visit in 24 days.'
+      rPrimary.textContent = 'View tenant’s latest check-in'
+    }
+  }))
+
+  // Beat 5 — A/B dashboard
+  const abMock = document.getElementById('abMock')
+  const timelineHTML = `<div class="mock">
+    <div class="tl-item"><div class="tl-thumb"></div><div><div class="d">TODAY · 09:12</div><div class="l">Monthly inspection — all clear ✓</div></div></div>
+    <div class="tl-item"><div class="tl-thumb"></div><div><div class="d">12 DAYS AGO</div><div class="l">Kitchen tap fixed — after-photos added</div></div></div>
+    <div class="tl-item"><div class="tl-thumb"></div><div><div class="d">28 DAYS AGO</div><div class="l">Society dues paid · NOC on file</div></div></div>
+  </div>`
+  const gridHTML = `<div class="mock"><table class="grid">
+    <tr><th>Item</th><th>Status</th><th>Date</th><th>₹</th></tr>
+    <tr><td>Inspection</td><td>Clear</td><td>Today</td><td>—</td></tr>
+    <tr><td>Kitchen tap</td><td>Closed</td><td>−12d</td><td>1,200</td></tr>
+    <tr><td>Society dues</td><td>Paid</td><td>−28d</td><td>4,500</td></tr>
+    <tr><td>NOC</td><td>On file</td><td>−28d</td><td>—</td></tr>
+  </table></div>`
+  function renderAB(v) { abMock.innerHTML = v === 'a' ? timelineHTML : gridHTML }
+  document.querySelectorAll('#abToggle button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#abToggle button').forEach(x => x.classList.remove('on')); b.classList.add('on'); renderAB(b.dataset.ab)
+  })); renderAB('a')
+
+  // Beat 6 — B2C / B2B
+  const segMock = document.getElementById('segMock')
+  const b2bHTML = `<div class="mock"><table class="grid">
+    <tr><th>Unit</th><th>Health</th><th>Last seen</th><th>Flag</th></tr>
+    <tr><td>A-1203</td><td><span class="rag" style="background:var(--green)"></span></td><td>6d</td><td>—</td></tr>
+    <tr><td>B-0704</td><td><span class="rag" style="background:var(--amber)"></span></td><td>19d</td><td>Dues overdue</td></tr>
+    <tr><td>C-1101</td><td><span class="rag" style="background:var(--red)"></span></td><td>41d</td><td>No inspection · SLA breach</td></tr>
+    <tr><td>D-0202</td><td><span class="rag" style="background:var(--green)"></span></td><td>3d</td><td>—</td></tr>
+  </table></div>`
+  function renderSeg(v) { segMock.innerHTML = v === 'b2c' ? timelineHTML : b2bHTML }
+  document.querySelectorAll('#segToggle button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#segToggle button').forEach(x => x.classList.remove('on')); b.classList.add('on'); renderSeg(b.dataset.seg)
+  })); renderSeg('b2c')
+
+  // Beat 7 — role card
+  const ROLES = {
+    owner: {
+      role: 'Owner view', health: ['Healthy', 'var(--green)', 'rgba(47,208,138,0.14)'],
+      body: 'Yield this month: <strong>₹18,400</strong> · next inspection in 6 days · 0 open tickets.',
+      primary: 'Approve May payout', ghost: false,
+    },
+    tenant: {
+      role: 'Tenant view', health: ['Repair in progress', 'var(--amber)', 'rgba(240,178,60,0.14)'],
+      body: 'Your kitchen tap request — <strong>agent verifying</strong>. No financials shown, ever.',
+      primary: 'Track my request', ghost: true,
+    },
+    agent: {
+      role: 'Agent view', health: ['Inspection due', 'var(--cyan)', 'rgba(79,214,255,0.14)'],
+      body: 'Checklist 0/6 · photos 0/6 · <strong>offline cache ready</strong> — sync when signal returns.',
+      primary: 'Start inspection', ghost: false,
+    },
+  }
+  const scRole = document.getElementById('scRole'), scHealth = document.getElementById('scHealth')
+  const scBody = document.getElementById('scBody'), scPrimary = document.getElementById('scPrimary')
+  function renderRole(r) {
+    const d = ROLES[r]
+    scRole.textContent = d.role
+    scHealth.innerHTML = '<span class="dot" style="background:' + d.health[1] + '"></span> ' + d.health[0]
+    scHealth.style.color = d.health[1]; scHealth.style.background = d.health[2]
+    scBody.innerHTML = d.body
+    scPrimary.textContent = d.primary
+    scPrimary.className = 'sc-primary' + (d.ghost ? ' ghost' : '')
+  }
+  document.querySelectorAll('#roleToggle button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#roleToggle button').forEach(x => x.classList.remove('on')); b.classList.add('on'); renderRole(b.dataset.role)
+  })); renderRole('owner')
+</script>
+</body>
+</html>
