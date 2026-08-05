@@ -1,5 +1,6 @@
 /* Coming Soon — samprati.design
    Self-contained animated splash built on public/background.svg (inlined).
+   Palette matches the brand: cyan #4fd6ff, blue #6a8bff, mint #6bffb0.
    Delete this file + ComingSoon.jsx (and the flag in App.jsx) when launching. */
 
 .cs-root {
@@ -9,9 +10,9 @@
   display: grid;
   place-items: center;
   overflow: hidden;
-  color: #f6efe9;
-  background: #0a0709;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #eaf3ff;
+  background: #05060c;
+  font-family: 'PP Gosha Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -34,8 +35,8 @@
   z-index: 1;
   pointer-events: none;
   background:
-    radial-gradient(120% 90% at 50% 34%, transparent 42%, rgba(10, 7, 11, 0.5) 100%),
-    linear-gradient(to bottom, rgba(10, 7, 11, 0.2) 0%, transparent 30%, transparent 46%, rgba(10, 7, 11, 0.86) 100%);
+    radial-gradient(120% 90% at 50% 34%, transparent 42%, rgba(5, 6, 12, 0.5) 100%),
+    linear-gradient(to bottom, rgba(5, 6, 12, 0.2) 0%, transparent 30%, transparent 46%, rgba(5, 6, 12, 0.88) 100%);
 }
 
 /* ---------- twinkling starfield ---------- */
@@ -48,9 +49,9 @@
 .cs-star {
   position: absolute;
   border-radius: 50%;
-  background: #fff;
+  background: #eaf6ff;
   opacity: var(--base, 0.4);
-  box-shadow: 0 0 4px rgba(255, 240, 230, 0.9);
+  box-shadow: 0 0 4px rgba(180, 230, 255, 0.9);
   animation-name: cs-twinkle;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
@@ -68,8 +69,8 @@
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 0 8px 1px rgba(255, 245, 235, 0.9);
+  background: #eaf6ff;
+  box-shadow: 0 0 8px 1px rgba(150, 220, 255, 0.9);
   opacity: 0;
   pointer-events: none;
 }
@@ -81,7 +82,7 @@
   width: 120px;
   height: 1.5px;
   transform: translateY(-50%);
-  background: linear-gradient(to left, rgba(255, 245, 235, 0.9), transparent);
+  background: linear-gradient(to left, rgba(160, 225, 255, 0.9), transparent);
 }
 .cs-shoot-a {
   top: 12%;
@@ -111,7 +112,27 @@
   text-align: center;
   padding: 0 24px;
   max-width: 720px;
-  transform: translateY(23vh); /* sit the copy in the lower half, below the orb */
+  transform: translateY(21vh); /* sit the copy in the lower half, below the orb */
+}
+
+/* the brand S mark */
+.cs-logo {
+  width: clamp(46px, 6vw, 64px);
+  height: auto;
+  margin: 0 auto 22px;
+  display: block;
+  filter: drop-shadow(0 0 10px rgba(79, 214, 255, 0.55))
+          drop-shadow(0 6px 20px rgba(0, 0, 0, 0.6));
+  opacity: 0;
+  animation: cs-logo-in 1s ease forwards 0.7s, cs-logo-float 7s ease-in-out infinite 1.7s;
+}
+@keyframes cs-logo-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes cs-logo-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
 }
 
 .cs-eyebrow {
@@ -121,7 +142,7 @@
   font-size: 12px;
   letter-spacing: 4px;
   text-transform: uppercase;
-  color: #ffbf99;
+  color: #82e4ff;
   font-weight: 700;
   margin: 0 0 16px;
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.8);
@@ -132,8 +153,8 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #ff9db0;
-  box-shadow: 0 0 10px 1px rgba(255, 157, 176, 0.9);
+  background: #6bffb0;
+  box-shadow: 0 0 10px 1px rgba(107, 255, 176, 0.9);
   animation: cs-glow-dot 2.4s ease-in-out infinite;
 }
 @keyframes cs-glow-dot {
@@ -147,7 +168,7 @@
   letter-spacing: -2px;
   font-weight: 800;
   margin: 0;
-  background: linear-gradient(100deg, #fff 18%, #ffd3a6 42%, #ff9db0 60%, #fff 82%);
+  background: linear-gradient(100deg, #fff 18%, #4fd6ff 42%, #6a8bff 60%, #fff 82%);
   background-size: 220% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -157,12 +178,12 @@
   animation: cs-shine 6s linear infinite, cs-rise 0.9s ease forwards 1.15s;
   opacity: 0;
 }
-.cs-title .dot { -webkit-text-fill-color: #ff9db0; color: #ff9db0; }
+.cs-title .dot { -webkit-text-fill-color: #4fd6ff; color: #4fd6ff; }
 @keyframes cs-shine { to { background-position: 220% center; } }
 
 .cs-sub {
   font-size: clamp(14px, 2.2vw, 18px);
-  color: #e7d7cc;
+  color: #b9cee6;
   margin: 18px auto 0;
   max-width: 52ch;
   line-height: 1.65;
@@ -178,13 +199,13 @@
   gap: 10px;
   margin-top: 30px;
   padding: 9px 18px;
-  border: 1px solid rgba(255, 220, 200, 0.22);
+  border: 1px solid rgba(120, 210, 255, 0.22);
   border-radius: 999px;
-  background: rgba(30, 18, 20, 0.5);
+  background: rgba(12, 22, 34, 0.5);
   font-size: 13px;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: #ffe6d6;
+  color: #d6ecff;
   backdrop-filter: blur(8px);
   opacity: 0;
   animation: cs-rise 0.9s ease forwards 1.5s;
@@ -193,14 +214,14 @@
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: #ffb24d;
-  box-shadow: 0 0 0 0 rgba(255, 178, 77, 0.6);
+  background: #6bffb0;
+  box-shadow: 0 0 0 0 rgba(107, 255, 176, 0.6);
   animation: cs-ping 1.9s ease-out infinite;
 }
 @keyframes cs-ping {
-  0%   { box-shadow: 0 0 0 0 rgba(255, 178, 77, 0.55); }
-  70%  { box-shadow: 0 0 0 12px rgba(255, 178, 77, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(255, 178, 77, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(107, 255, 176, 0.55); }
+  70%  { box-shadow: 0 0 0 12px rgba(107, 255, 176, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(107, 255, 176, 0); }
 }
 
 .cs-cta {
@@ -213,15 +234,15 @@
   animation: cs-rise 0.9s ease forwards 1.65s;
 }
 .cs-cta a {
-  color: #f6efe9;
+  color: #eaf3ff;
   text-decoration: none;
   font-size: 14px;
-  border-bottom: 1px solid rgba(255, 157, 176, 0.5);
+  border-bottom: 1px solid rgba(79, 214, 255, 0.5);
   padding-bottom: 2px;
   transition: color 0.2s ease, border-color 0.2s ease;
 }
-.cs-cta a:hover { color: #ff9db0; border-color: #ff9db0; }
-.cs-cta-sep { color: #6d5f5a; font-size: 13px; }
+.cs-cta a:hover { color: #4fd6ff; border-color: #4fd6ff; }
+.cs-cta-sep { color: #4a5a6e; font-size: 13px; }
 
 .cs-foot {
   position: absolute;
@@ -232,7 +253,7 @@
   text-align: center;
   font-size: 12px;
   letter-spacing: 1px;
-  color: #9a8b83;
+  color: #6a8199;
   opacity: 0;
   animation: cs-rise 0.9s ease forwards 1.9s;
 }
@@ -243,15 +264,15 @@
 }
 
 @media (max-width: 720px) {
-  .cs-inner { transform: translateY(26vh); }
+  .cs-inner { transform: translateY(24vh); }
   .cs-sub { max-width: 40ch; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .cs-svg { animation: cs-fade 1s ease forwards; }
-  .cs-star, .cs-shoot, .cs-eyebrow-dot, .cs-title, .cs-pulse { animation: none; }
+  .cs-star, .cs-shoot, .cs-eyebrow-dot, .cs-title, .cs-pulse, .cs-logo { animation: none; }
   .cs-shoot { display: none; }
-  .cs-eyebrow, .cs-title, .cs-sub, .cs-status, .cs-cta, .cs-foot {
+  .cs-logo, .cs-eyebrow, .cs-title, .cs-sub, .cs-status, .cs-cta, .cs-foot {
     animation: none;
     opacity: 1;
   }

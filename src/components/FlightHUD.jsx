@@ -341,7 +341,7 @@ export default function FlightHUD({ progressRef, navRef, uiLockRef, onFlyAgain }
             <span>{lastLeg.city}</span>
           </div>
           <div style={s.tkPax}>
-            <img src="/profile.webp" alt="Samprati Dash" style={s.tkAvatar} />
+            <img src="/profile_samprati.jpeg" alt="Samprati Dash" style={s.tkAvatar} />
             <div style={{ minWidth: 0 }}>
               <div style={s.tkPaxName}>{BOARDING.name}</div>
               <div style={s.tkPaxSub}>{BOARDING.role}</div>

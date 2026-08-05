@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import WaterRipple from './WaterRipple.jsx'
 import './LoadingScreen.css'
 
 const CHECKS = ['ENGINES', 'NAVIGATION', 'FUEL SYSTEMS', 'CABIN', 'CLEARANCE']
 const PILOT = `${import.meta.env.BASE_URL}profile-pilot.webp`
-const DESIGNER = `${import.meta.env.BASE_URL}profile.webp`
+const DESIGNER = `${import.meta.env.BASE_URL}profile_samprati.jpeg`
+const PHOTOS = [PILOT, DESIGNER] // stable identity so WaterRipple sets up once
 
 export default function LoadingScreen({ onDone }) {
   const [progress, setProgress] = useState(0)
@@ -30,9 +32,11 @@ export default function LoadingScreen({ onDone }) {
 
   return (
     <div className={`ls-wrap${ready ? ' ready' : ''}`} onClick={ready ? onDone : undefined}>
-      {/* pilot photo, with the designer photo cross-fading over it on click */}
-      <div className="ls-photo" style={{ backgroundImage: `url(${PILOT})` }} />
-      <div className="ls-photo top" style={{ backgroundImage: `url(${DESIGNER})`, opacity: designer ? 1 : 0 }} />
+      {/* pilot photo, cross-fading to the designer photo on click. The
+          WaterRipple canvas radiates ripples from the mouse as you hover. */}
+      <div className="ls-photo">
+        <WaterRipple className="ls-canvas" images={PHOTOS} designer={designer} />
+      </div>
 
       <div className="ls-content">
         <div className="ls-top">

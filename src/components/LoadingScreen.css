@@ -19,12 +19,18 @@
   right: 0;
   bottom: 0;
   width: 62%;
-  background-size: cover;
-  background-position: center right;
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 42%);
   mask-image: linear-gradient(90deg, transparent 0%, #000 42%);
 }
-.ls-photo.top { transition: opacity 0.6s ease; }
+/* the WebGL water-ripple canvas fills the photo area */
+.ls-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none; /* pointer handled on window; keep clicks flowing through */
+}
 
 /* funny chat bubble that appears over the photo at 20% */
 .ls-chat {

@@ -19,9 +19,15 @@ const END_T = CONTENT_PROGRESS[N - 1]
 const ROTATE_T = 1 / SEG
 const FLARE_T = (SEG - 1) / SEG
 
-// LAUNCH SWITCH — while the real site is being built, show the coming-soon
-// splash. Set this to false to reveal the full 3D portfolio.
-const SHOW_COMING_SOON = true
+// LAUNCH SWITCH — the coming-soon splash shows in the PRODUCTION build (what's
+// deployed to samprati.design). Local `npm run dev` loads the full 3D portfolio
+// so you can keep building it — but you can preview the splash any time by
+// adding ?soon to the URL (e.g. http://localhost:5173/?soon).
+//   • Develop the real site:     npm run dev                 → portfolio
+//   • Preview the coming-soon:    http://localhost:5173/?soon → splash
+//   • Launch the real site live:  change PROD → false and deploy
+const FORCE_SOON = new URLSearchParams(window.location.search).has('soon')
+const SHOW_COMING_SOON = import.meta.env.PROD || FORCE_SOON
 
 function App() {
   if (SHOW_COMING_SOON) return <ComingSoon />

@@ -20,6 +20,7 @@ export default function ComingSoon() {
       <span className="cs-shoot cs-shoot-b" aria-hidden="true" />
 
       <div className="cs-inner">
+        <Logo />
         <p className="cs-eyebrow">
           <span className="cs-eyebrow-dot" />Coming soon · 2026
         </p>
@@ -44,6 +45,25 @@ export default function ComingSoon() {
 
       <div className="cs-foot">© {new Date().getFullYear()} Samprati Dash · All rights reserved</div>
     </div>
+  )
+}
+
+// The brand "S" mark, cyan→blue with a soft glow so it reads as a mark, not text.
+function Logo() {
+  return (
+    <svg className="cs-logo" viewBox="0 0 251 226" aria-label="Samprati Dash logo" role="img">
+      <defs>
+        <linearGradient id="cs-logo-grad" x1="0" y1="0" x2="251" y2="226" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#8fe6ff" />
+          <stop offset="0.5" stopColor="#4fd6ff" />
+          <stop offset="1" stopColor="#6a8bff" />
+        </linearGradient>
+      </defs>
+      <path
+        fill="url(#cs-logo-grad)"
+        d="M233.149 101.592H35.7158V35.459H166.89C193.575 35.459 215.27 57.0122 215.27 83.4906H250.986C251 37.4655 213.277 0 166.89 0H17.865C7.99966 0 0 7.94213 0 17.7365V119.328C0 129.123 7.99966 137.065 17.865 137.065H215.284V142.509C215.284 169.002 193.575 190.541 166.905 190.541H35.7158V153.258H0V208.278C0 218.072 7.99966 226.014 17.865 226.014H166.905C213.277 226.014 251.014 188.548 251.014 142.509V119.328C251.014 109.534 243.014 101.592 233.149 101.592Z"
+      />
+    </svg>
   )
 }
 
@@ -84,7 +104,8 @@ function Starfield() {
 }
 
 // The public/background.svg art, inlined so its glow + flare can be animated.
-// The orb drifts, the glow rings breathe, and the lens flare shimmers.
+// Gradients recoloured to the brand palette (cyan / blue / mint). The orb
+// drifts, the glow rings breathe, and the lens flare shimmers.
 function BackgroundArt() {
   return (
     <svg
@@ -102,7 +123,7 @@ function BackgroundArt() {
         .cls-5{fill:url(#radial-gradient-4)}
         .cls-2{fill:url(#radial-gradient-5)}
         .cls-1{fill:url(#radial-gradient-6)}
-        .cls-9{fill:#1b181f}
+        .cls-9{fill:#0b1018}
 
         /* --- animation --- */
         .cls-3,.cls-6,.cls-7{transform-box:fill-box;transform-origin:center;
@@ -126,41 +147,45 @@ function BackgroundArt() {
       `}</style>
 
       <defs>
+        {/* rim glow — brand cyan */}
         <radialGradient id="radial-gradient" cx="251.08" cy="181.85" fx="251.08" fy="181.85" r="119.86" gradientTransform="translate(-28.27 -43.13) scale(1.11 1.06)" gradientUnits="userSpaceOnUse">
-          <stop offset=".66" stopColor="#b3506d" />
-          <stop offset=".68" stopColor="#9d4660" />
-          <stop offset=".73" stopColor="#6d3142" />
-          <stop offset=".78" stopColor="#461f2a" />
-          <stop offset=".83" stopColor="#271118" />
-          <stop offset=".88" stopColor="#11070a" />
-          <stop offset=".92" stopColor="#040202" />
+          <stop offset=".66" stopColor="#4fd6ff" />
+          <stop offset=".68" stopColor="#3ab8e0" />
+          <stop offset=".73" stopColor="#2887a6" />
+          <stop offset=".78" stopColor="#1a586e" />
+          <stop offset=".83" stopColor="#0f3241" />
+          <stop offset=".88" stopColor="#071a22" />
+          <stop offset=".92" stopColor="#02090e" />
           <stop offset=".96" stopColor="#000" />
         </radialGradient>
         <radialGradient id="radial-gradient-2" cy="181.85" fy="181.85" r="106.8" href="#radial-gradient" />
+        {/* inner secondary glow — brand blue */}
         <radialGradient id="radial-gradient-3" cx="249.48" cy="-185.33" fx="249.48" fy="-185.33" r="106.8" gradientTransform="translate(11.73 230.46) scale(.96 .65)" gradientUnits="userSpaceOnUse">
-          <stop offset=".66" stopColor="#d46b00" />
-          <stop offset=".71" stopColor="#9d4f00" />
-          <stop offset=".75" stopColor="#6e3700" />
-          <stop offset=".8" stopColor="#462300" />
-          <stop offset=".84" stopColor="#271400" />
-          <stop offset=".89" stopColor="#110800" />
-          <stop offset=".93" stopColor="#040200" />
+          <stop offset=".66" stopColor="#2f8fef" />
+          <stop offset=".71" stopColor="#2472c2" />
+          <stop offset=".75" stopColor="#18508b" />
+          <stop offset=".8" stopColor="#0f3459" />
+          <stop offset=".84" stopColor="#081d33" />
+          <stop offset=".89" stopColor="#030d18" />
+          <stop offset=".93" stopColor="#010407" />
           <stop offset=".96" stopColor="#000" />
         </radialGradient>
+        {/* the dark disc — cool near-black */}
         <linearGradient id="linear-gradient" x1="250" y1="264.7" x2="250" y2="30.23" gradientUnits="userSpaceOnUse">
-          <stop offset=".28" stopColor="#1b181f" />
-          <stop offset=".96" stopColor="#2b282f" />
+          <stop offset=".28" stopColor="#0e141c" />
+          <stop offset=".96" stopColor="#1a2230" />
         </linearGradient>
+        {/* lens flare streak — bright cyan */}
         <radialGradient id="radial-gradient-4" cx="-395.81" cy="-2552.02" fx="-395.81" fy="-2552.02" r="170.22" gradientTransform="translate(-65.29 318.73) rotate(90) scale(.56 .16)" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#b3506d" />
-          <stop offset="0" stopColor="#b04f6b" />
-          <stop offset=".08" stopColor="#873c52" />
-          <stop offset=".15" stopColor="#632c3c" />
-          <stop offset=".24" stopColor="#441e29" />
-          <stop offset=".33" stopColor="#2b131a" />
-          <stop offset=".43" stopColor="#180a0e" />
-          <stop offset=".55" stopColor="#0a0406" />
-          <stop offset=".69" stopColor="#020101" />
+          <stop offset="0" stopColor="#8fe8ff" />
+          <stop offset="0" stopColor="#7fe0f8" />
+          <stop offset=".08" stopColor="#57b6d2" />
+          <stop offset=".15" stopColor="#3d88a2" />
+          <stop offset=".24" stopColor="#285f74" />
+          <stop offset=".33" stopColor="#163f50" />
+          <stop offset=".43" stopColor="#0c2632" />
+          <stop offset=".55" stopColor="#05141c" />
+          <stop offset=".69" stopColor="#020a0e" />
           <stop offset=".96" stopColor="#000" />
         </radialGradient>
         <radialGradient id="radial-gradient-5" cx="-395.81" fx="-395.81" r="100.01" gradientTransform="translate(-65.29 318.73) rotate(90) scale(.56 .16)" href="#radial-gradient-4" />
