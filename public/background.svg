@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 300">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#radial-gradient-6);
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5, .cls-6 {
+        mix-blend-mode: screen;
+      }
+
+      .cls-2 {
+        fill: url(#radial-gradient-5);
+      }
+
+      .cls-7 {
+        fill: url(#radial-gradient-3);
+      }
+
+      .cls-3 {
+        fill: url(#radial-gradient);
+      }
+
+      .cls-8 {
+        isolation: isolate;
+      }
+
+      .cls-9 {
+        fill: #1b181f;
+      }
+
+      .cls-5 {
+        fill: url(#radial-gradient-4);
+      }
+
+      .cls-6 {
+        fill: url(#radial-gradient-2);
+      }
+
+      .cls-10 {
+        fill: url(#linear-gradient);
+      }
+    </style>
+    <radialGradient id="radial-gradient" cx="251.08" cy="181.85" fx="251.08" fy="181.85" r="119.86" gradientTransform="translate(-28.27 -43.13) scale(1.11 1.06)" gradientUnits="userSpaceOnUse">
+      <stop offset=".66" stop-color="#b3506d"/>
+      <stop offset=".68" stop-color="#9d4660"/>
+      <stop offset=".73" stop-color="#6d3142"/>
+      <stop offset=".78" stop-color="#461f2a"/>
+      <stop offset=".83" stop-color="#271118"/>
+      <stop offset=".88" stop-color="#11070a"/>
+      <stop offset=".92" stop-color="#040202"/>
+      <stop offset=".96" stop-color="#000"/>
+    </radialGradient>
+    <radialGradient id="radial-gradient-2" cy="181.85" fy="181.85" r="106.8" xlink:href="#radial-gradient"/>
+    <radialGradient id="radial-gradient-3" cx="249.48" cy="-185.33" fx="249.48" fy="-185.33" r="106.8" gradientTransform="translate(11.73 230.46) scale(.96 .65)" gradientUnits="userSpaceOnUse">
+      <stop offset=".66" stop-color="#d46b00"/>
+      <stop offset=".71" stop-color="#9d4f00"/>
+      <stop offset=".75" stop-color="#6e3700"/>
+      <stop offset=".8" stop-color="#462300"/>
+      <stop offset=".84" stop-color="#271400"/>
+      <stop offset=".89" stop-color="#110800"/>
+      <stop offset=".93" stop-color="#040200"/>
+      <stop offset=".96" stop-color="#000"/>
+    </radialGradient>
+    <linearGradient id="linear-gradient" x1="250" y1="264.7" x2="250" y2="30.23" gradientUnits="userSpaceOnUse">
+      <stop offset=".28" stop-color="#1b181f"/>
+      <stop offset=".96" stop-color="#2b282f"/>
+    </linearGradient>
+    <radialGradient id="radial-gradient-4" cx="-395.81" cy="-2552.02" fx="-395.81" fy="-2552.02" r="170.22" gradientTransform="translate(-65.29 318.73) rotate(90) scale(.56 .16)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#b3506d"/>
+      <stop offset="0" stop-color="#b04f6b"/>
+      <stop offset=".08" stop-color="#873c52"/>
+      <stop offset=".15" stop-color="#632c3c"/>
+      <stop offset=".24" stop-color="#441e29"/>
+      <stop offset=".33" stop-color="#2b131a"/>
+      <stop offset=".43" stop-color="#180a0e"/>
+      <stop offset=".55" stop-color="#0a0406"/>
+      <stop offset=".69" stop-color="#020101"/>
+      <stop offset=".96" stop-color="#000"/>
+    </radialGradient>
+    <radialGradient id="radial-gradient-5" cx="-395.81" fx="-395.81" r="100.01" gradientTransform="translate(-65.29 318.73) rotate(90) scale(.56 .16)" xlink:href="#radial-gradient-4"/>
+    <radialGradient id="radial-gradient-6" cx="-343.3" cy="1843.45" fx="-343.3" fy="1843.45" r="119.86" gradientTransform="translate(138.02 615.12) rotate(-180) scale(.56 .28)" xlink:href="#radial-gradient-4"/>
+  </defs>
+  <g class="cls-8">
+    <g id="Layer_2" data-name="Layer 2">
+      <g id="Layer_1-2" data-name="Layer 1">
+        <g>
+          <rect class="cls-9" width="500" height="300"/>
+          <g>
+            <g>
+              <g>
+                <ellipse class="cls-3" cx="250" cy="148.89" rx="132.84" ry="126.56"/>
+                <ellipse class="cls-6" cx="250" cy="148.89" rx="118.37" ry="112.77"/>
+                <g class="cls-4">
+                  <ellipse class="cls-7" cx="250" cy="110.59" rx="102" ry="69.08"/>
+                </g>
+              </g>
+              <circle class="cls-10" cx="250" cy="169.37" r="108.3"/>
+            </g>
+            <g>
+              <ellipse class="cls-5" cx="330.46" cy="96.86" rx="26.4" ry="95.42" transform="translate(20.48 246.86) rotate(-42.16)"/>
+              <ellipse class="cls-2" cx="330.46" cy="96.86" rx="15.51" ry="56.06" transform="translate(20.48 246.86) rotate(-42.16)"/>
+            </g>
+            <ellipse class="cls-1" cx="330.46" cy="96.86" rx="67.18" ry="33.7" transform="translate(31.17 267.19) rotate(-45.98)"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

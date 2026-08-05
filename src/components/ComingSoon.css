@@ -1,0 +1,259 @@
+/* Coming Soon — samprati.design
+   Self-contained animated splash built on public/background.svg (inlined).
+   Delete this file + ComingSoon.jsx (and the flag in App.jsx) when launching. */
+
+.cs-root {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: #f6efe9;
+  background: #0a0709;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* inlined SVG art — covers the viewport, fades in on load */
+.cs-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  animation: cs-fade 1.8s ease forwards;
+}
+@keyframes cs-fade { to { opacity: 1; } }
+
+/* vignette + bottom gradient so the wordmark stays legible over the art */
+.cs-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% 34%, transparent 42%, rgba(10, 7, 11, 0.5) 100%),
+    linear-gradient(to bottom, rgba(10, 7, 11, 0.2) 0%, transparent 30%, transparent 46%, rgba(10, 7, 11, 0.86) 100%);
+}
+
+/* ---------- twinkling starfield ---------- */
+.cs-stars {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.cs-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  opacity: var(--base, 0.4);
+  box-shadow: 0 0 4px rgba(255, 240, 230, 0.9);
+  animation-name: cs-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: opacity, transform;
+}
+@keyframes cs-twinkle {
+  0%, 100% { opacity: calc(var(--base) * 0.5); transform: scale(0.8); }
+  50%      { opacity: 1; transform: scale(1.25); }
+}
+
+/* ---------- shooting stars ---------- */
+.cs-shoot {
+  position: absolute;
+  z-index: 2;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 8px 1px rgba(255, 245, 235, 0.9);
+  opacity: 0;
+  pointer-events: none;
+}
+.cs-shoot::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 2px;
+  width: 120px;
+  height: 1.5px;
+  transform: translateY(-50%);
+  background: linear-gradient(to left, rgba(255, 245, 235, 0.9), transparent);
+}
+.cs-shoot-a {
+  top: 12%;
+  left: 8%;
+  animation: cs-shoot 9s ease-in infinite;
+  animation-delay: 2s;
+}
+.cs-shoot-b {
+  top: 24%;
+  left: 55%;
+  transform: scale(0.8);
+  animation: cs-shoot 11s ease-in infinite;
+  animation-delay: 6.5s;
+}
+@keyframes cs-shoot {
+  0%   { opacity: 0; transform: translate(0, 0) rotate(18deg); }
+  3%   { opacity: 1; }
+  16%  { opacity: 1; transform: translate(420px, 150px) rotate(18deg); }
+  18%  { opacity: 0; transform: translate(470px, 168px) rotate(18deg); }
+  100% { opacity: 0; transform: translate(470px, 168px) rotate(18deg); }
+}
+
+/* ---------- wordmark + copy ---------- */
+.cs-inner {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  padding: 0 24px;
+  max-width: 720px;
+  transform: translateY(23vh); /* sit the copy in the lower half, below the orb */
+}
+
+.cs-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #ffbf99;
+  font-weight: 700;
+  margin: 0 0 16px;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  animation: cs-rise 0.9s ease forwards 1s;
+}
+.cs-eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff9db0;
+  box-shadow: 0 0 10px 1px rgba(255, 157, 176, 0.9);
+  animation: cs-glow-dot 2.4s ease-in-out infinite;
+}
+@keyframes cs-glow-dot {
+  0%, 100% { opacity: 0.6; transform: scale(0.85); }
+  50%      { opacity: 1; transform: scale(1.15); }
+}
+
+.cs-title {
+  font-size: clamp(34px, 8vw, 82px);
+  line-height: 1;
+  letter-spacing: -2px;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(100deg, #fff 18%, #ffd3a6 42%, #ff9db0 60%, #fff 82%);
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 4px 30px rgba(0, 0, 0, 0.9));
+  animation: cs-shine 6s linear infinite, cs-rise 0.9s ease forwards 1.15s;
+  opacity: 0;
+}
+.cs-title .dot { -webkit-text-fill-color: #ff9db0; color: #ff9db0; }
+@keyframes cs-shine { to { background-position: 220% center; } }
+
+.cs-sub {
+  font-size: clamp(14px, 2.2vw, 18px);
+  color: #e7d7cc;
+  margin: 18px auto 0;
+  max-width: 52ch;
+  line-height: 1.65;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.9);
+  opacity: 0;
+  animation: cs-rise 0.9s ease forwards 1.35s;
+}
+.cs-sub b { color: #fff; font-weight: 700; }
+
+.cs-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 30px;
+  padding: 9px 18px;
+  border: 1px solid rgba(255, 220, 200, 0.22);
+  border-radius: 999px;
+  background: rgba(30, 18, 20, 0.5);
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #ffe6d6;
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  animation: cs-rise 0.9s ease forwards 1.5s;
+}
+.cs-pulse {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ffb24d;
+  box-shadow: 0 0 0 0 rgba(255, 178, 77, 0.6);
+  animation: cs-ping 1.9s ease-out infinite;
+}
+@keyframes cs-ping {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 178, 77, 0.55); }
+  70%  { box-shadow: 0 0 0 12px rgba(255, 178, 77, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 178, 77, 0); }
+}
+
+.cs-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 26px;
+  opacity: 0;
+  animation: cs-rise 0.9s ease forwards 1.65s;
+}
+.cs-cta a {
+  color: #f6efe9;
+  text-decoration: none;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255, 157, 176, 0.5);
+  padding-bottom: 2px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.cs-cta a:hover { color: #ff9db0; border-color: #ff9db0; }
+.cs-cta-sep { color: #6d5f5a; font-size: 13px; }
+
+.cs-foot {
+  position: absolute;
+  bottom: 22px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #9a8b83;
+  opacity: 0;
+  animation: cs-rise 0.9s ease forwards 1.9s;
+}
+
+@keyframes cs-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 720px) {
+  .cs-inner { transform: translateY(26vh); }
+  .cs-sub { max-width: 40ch; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-svg { animation: cs-fade 1s ease forwards; }
+  .cs-star, .cs-shoot, .cs-eyebrow-dot, .cs-title, .cs-pulse { animation: none; }
+  .cs-shoot { display: none; }
+  .cs-eyebrow, .cs-title, .cs-sub, .cs-status, .cs-cta, .cs-foot {
+    animation: none;
+    opacity: 1;
+  }
+  .cs-title { -webkit-text-fill-color: #fff; color: #fff; }
+}

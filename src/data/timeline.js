@@ -164,16 +164,16 @@ export const WORKS = [
     highlights: ['Reframed the core problem, not the symptom', 'Coordination without surveillance', 'Design-system-first, WCAG 2.2'],
   },
   {
-    title: 'Logistics Flow Study',
-    tag: 'UX Case Study',
-    year: '2021',
-    role: 'UX Research & Design',
-    href: '#',
+    title: 'The Blind Spot',
+    tag: 'Service Design Case Study',
+    year: '2025',
+    role: 'Sole Designer',
+    href: '/case_study/remote-property-management.html',
     accent: ['#6a3df0', '#c9a9ff'],
     img: null,
     summary:
-      'An end-to-end study of a logistics order journey — mapping where users struggle and reworking the highest-friction steps first.',
-    highlights: ['Full journey map, persona-driven', 'Rebuilt the drop-off screens first', 'Prototype tested with real users'],
+      'Rethinking remote property management for NRIs and cross-city owners — designing for verifiable trust, not just rent collection. A three-app ecosystem that turns offline inspections into online reassurance.',
+    highlights: ['Reframed the problem: proof, not payments', 'Multi-platform design system (3 surfaces)', 'Pivoted the service model on unit economics'],
   },
   {
     title: 'Facility Ops Dashboard',

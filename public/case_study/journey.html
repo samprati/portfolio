@@ -1,0 +1,282 @@
+<title>Remote Property Management — User Journey Flow</title>
+<style>
+  :root{
+    --bg:#0a1017; --surface:#111c2e; --surface2:#16243a; --raise:#1b2c46;
+    --line:rgba(255,255,255,0.10); --line2:rgba(255,255,255,0.16);
+    --text:#eaf3ff; --muted:#93a7c0; --faint:#63758e;
+    --accent:#4fd6ff; --accent2:#6a8bff; --blue:#2f8fef;
+    --owner:#4fd6ff; --tenant:#38d996; --agent:#f0b23c; --ops:#a98bff;
+    --ok:#2fd08a; --warn:#f0b23c; --crit:#ff6b6b;
+    --shadow:0 18px 44px rgba(2,8,20,0.5);
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#eef3f9; --surface:#ffffff; --surface2:#f4f8fd; --raise:#ffffff;
+      --line:rgba(12,28,55,0.12); --line2:rgba(12,28,55,0.2);
+      --text:#132133; --muted:#54677f; --faint:#8496ab;
+      --accent:#0b8fd6; --accent2:#3a5fe0; --blue:#0b5fb8;
+      --owner:#0b8fd6; --tenant:#0f9d63; --agent:#c67f18; --ops:#6a4bd0;
+      --ok:#0f9d63; --warn:#c67f18; --crit:#d84a44;
+      --shadow:0 18px 40px rgba(12,28,55,0.12);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0a1017; --surface:#111c2e; --surface2:#16243a; --raise:#1b2c46;
+    --line:rgba(255,255,255,0.10); --line2:rgba(255,255,255,0.16);
+    --text:#eaf3ff; --muted:#93a7c0; --faint:#63758e;
+    --accent:#4fd6ff; --accent2:#6a8bff; --blue:#2f8fef;
+    --owner:#4fd6ff; --tenant:#38d996; --agent:#f0b23c; --ops:#a98bff;
+    --ok:#2fd08a; --warn:#f0b23c; --crit:#ff6b6b; --shadow:0 18px 44px rgba(2,8,20,0.5);
+  }
+  :root[data-theme="light"]{
+    --bg:#eef3f9; --surface:#ffffff; --surface2:#f4f8fd; --raise:#ffffff;
+    --line:rgba(12,28,55,0.12); --line2:rgba(12,28,55,0.2);
+    --text:#132133; --muted:#54677f; --faint:#8496ab;
+    --accent:#0b8fd6; --accent2:#3a5fe0; --blue:#0b5fb8;
+    --owner:#0b8fd6; --tenant:#0f9d63; --agent:#c67f18; --ops:#6a4bd0;
+    --ok:#0f9d63; --warn:#c67f18; --crit:#d84a44; --shadow:0 18px 40px rgba(12,28,55,0.12);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:
+      radial-gradient(120% 80% at 85% -10%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:"SF Mono",ui-monospace,"Roboto Mono",Menlo,monospace}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 24px}
+
+  /* hero */
+  .hero{padding:64px 0 30px}
+  .eyebrow{font-family:"SF Mono",ui-monospace,monospace; font-size:12px; letter-spacing:3px; text-transform:uppercase; color:var(--accent); font-weight:700}
+  h1{font-size:clamp(30px,5vw,50px); line-height:1.05; letter-spacing:-1px; margin:14px 0 12px; text-wrap:balance; font-weight:800}
+  .lede{font-size:clamp(16px,2.2vw,20px); color:var(--muted); max-width:60ch}
+  .lede b{color:var(--text)}
+
+  section{padding:26px 0}
+  .slab{font-family:"SF Mono",ui-monospace,monospace; font-size:12px; letter-spacing:2.5px; text-transform:uppercase; color:var(--accent); font-weight:700}
+  h2{font-size:clamp(21px,3vw,28px); letter-spacing:-0.4px; margin:8px 0 4px; font-weight:800; text-wrap:balance}
+  .note{color:var(--muted); margin:6px 0 20px; max-width:64ch}
+
+  /* actor legend */
+  .actors{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+  .actor{background:var(--surface); border:1px solid var(--line); border-top:3px solid var(--c); border-radius:14px; padding:16px 16px 18px; box-shadow:var(--shadow)}
+  .actor .ic{font-size:22px}
+  .actor h3{margin:8px 0 2px; font-size:16px}
+  .actor .surface{font-family:"SF Mono",monospace; font-size:11px; letter-spacing:1px; color:var(--c); text-transform:uppercase}
+  .actor p{margin:8px 0 0; font-size:13.5px; color:var(--muted)}
+
+  /* horizontal flow of steps */
+  .flow{display:flex; gap:0; align-items:stretch; overflow-x:auto; padding:6px 2px 14px}
+  .step{flex:0 0 auto; width:190px; background:var(--surface); border:1px solid var(--line); border-radius:13px; padding:14px 15px; box-shadow:var(--shadow); position:relative}
+  .step .n{font-family:"SF Mono",monospace; font-size:12px; font-weight:700; color:var(--accent)}
+  .step h4{margin:6px 0 4px; font-size:14.5px}
+  .step p{margin:0; font-size:12.5px; color:var(--muted); line-height:1.5}
+  .arrow{flex:0 0 auto; align-self:center; width:34px; display:grid; place-items:center; color:var(--faint)}
+  .arrow svg{width:20px; height:20px}
+  .loopback{margin-top:2px; font-family:"SF Mono",monospace; font-size:12px; color:var(--tenant); display:flex; align-items:center; gap:8px}
+
+  /* swimlanes */
+  .lane{display:grid; grid-template-columns:150px 1fr; gap:14px; align-items:center; padding:14px 0; border-top:1px solid var(--line)}
+  .lane:first-of-type{border-top:0}
+  .lane-head{display:flex; flex-direction:column; gap:4px}
+  .lane-head .who{font-weight:800; font-size:15px; color:var(--c)}
+  .lane-head .role{font-family:"SF Mono",monospace; font-size:10.5px; letter-spacing:1px; color:var(--muted); text-transform:uppercase}
+  .lane-steps{display:flex; align-items:center; gap:0; overflow-x:auto; padding-bottom:6px}
+  .chip{flex:0 0 auto; background:var(--surface2); border:1px solid var(--line); border-left:3px solid var(--c); border-radius:10px; padding:9px 13px; font-size:13px; white-space:nowrap}
+  .mini-arrow{flex:0 0 auto; color:var(--faint); padding:0 8px; font-size:14px}
+
+  /* state machine */
+  .sm{display:flex; flex-direction:column; gap:0}
+  .srow{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .state{background:var(--surface); border:1px solid var(--line2); border-radius:999px; padding:9px 16px; font-family:"SF Mono",monospace; font-size:12.5px; font-weight:700; letter-spacing:0.5px}
+  .state.gate{border-color:var(--accent); color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 14%, transparent)}
+  .state.term{border-color:var(--ok); color:var(--ok)}
+  .state.bad{border-color:var(--crit); color:var(--crit)}
+  .trans{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:12.5px}
+  .trans .lbl{font-family:"SF Mono",monospace; font-size:11px; color:var(--faint)}
+  .vbar{width:2px; height:16px; background:var(--line2); margin-left:22px}
+  .branch{margin-left:22px; border-left:2px dashed var(--line2); padding:8px 0 8px 20px; display:flex; flex-direction:column; gap:12px}
+
+  .callout{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:12px; padding:16px 18px; margin-top:18px; color:var(--muted); font-size:14px}
+  .callout b{color:var(--text)}
+
+  /* health */
+  .health{display:flex; gap:14px; flex-wrap:wrap; align-items:stretch}
+  .hcard{flex:1 1 200px; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; box-shadow:var(--shadow)}
+  .dot{width:12px; height:12px; border-radius:50%; display:inline-block; margin-right:8px; vertical-align:middle}
+  .hcard h4{margin:0 0 8px; font-size:15px; display:flex; align-items:center}
+  .hcard p{margin:0; font-size:13px; color:var(--muted)}
+
+  footer{padding:34px 0 60px; color:var(--faint); font-size:13px; border-top:1px solid var(--line); margin-top:30px}
+
+  @media (max-width:720px){
+    .actors{grid-template-columns:repeat(2,1fr)}
+    .lane{grid-template-columns:1fr; align-items:start; gap:8px}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .step,.actor,.hcard{transition:transform .16s ease, box-shadow .16s ease}
+    .step:hover,.actor:hover,.hcard:hover{transform:translateY(-3px)}
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">PropTech · Service Design · User Journey</div>
+    <h1>Remote Property Management — how the whole system flows</h1>
+    <p class="lede">Work happens <b>offline</b> (an agent physically visits); the product's job is to turn that reality into <b>visible proof</b> on a distant owner's screen. Everything below is one data spine, seen through four roles.</p>
+  </header>
+
+  <!-- ACTORS -->
+  <section>
+    <div class="slab">The four roles</div>
+    <h2>One system, four surfaces</h2>
+    <p class="note">Each role sees the same underlying objects — a unit, an inspection, a ticket, the ledger — rendered for what only they need.</p>
+    <div class="actors">
+      <div class="actor" style="--c:var(--owner)">
+        <div class="ic">🛰️</div>
+        <h3>Owner</h3>
+        <div class="surface">Mobile · B2B web</div>
+        <p>The distant investor (NRI / cross-city). Sees the truth, approves the money.</p>
+      </div>
+      <div class="actor" style="--c:var(--tenant)">
+        <div class="ic">🔑</div>
+        <h3>Tenant</h3>
+        <div class="surface">Mobile portal</div>
+        <p>Pays rent, raises issues. Sees maintenance status only — never the owner's money.</p>
+      </div>
+      <div class="actor" style="--c:var(--agent)">
+        <div class="ic">📷</div>
+        <h3>Field Agent</h3>
+        <div class="surface">Mobile · offline-first</div>
+        <p>Captures physical reality: checklist, geotagged photos, before/after proof.</p>
+      </div>
+      <div class="actor" style="--c:var(--ops)">
+        <div class="ic">🗂️</div>
+        <h3>Ops / Admin</h3>
+        <div class="surface">Web console</div>
+        <p>Dispatches agents, resolves disputes, manages the vendor registry.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CORE LOOP -->
+  <section>
+    <div class="slab">The heartbeat</div>
+    <h2>The core inspection loop</h2>
+    <p class="note">This runs on a cadence set by the owner's subscription (e.g. monthly). Between human visits, IoT sensors fill the gap. Scroll the flow →</p>
+    <div class="flow">
+      <div class="step"><div class="n">01 · SYSTEM</div><h4>Dispatch</h4><p>Auto-prompt routes an agent to the unit, route-optimised.</p></div>
+      <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="step" style="border-left:3px solid var(--agent)"><div class="n" style="color:var(--agent)">02 · AGENT</div><h4>Inspect</h4><p>Standardised checklist + geotagged photos. Caches offline if no signal.</p></div>
+      <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="step"><div class="n">03 · SEAM</div><h4>Sync</h4><p>The moment it uploads, an Inspection object is created; health recomputes.</p></div>
+      <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="step" style="border-left:3px solid var(--owner)"><div class="n" style="color:var(--owner)">04 · OWNER</div><h4>Sees proof</h4><p>A visual, chronological timeline of the asset's health. Anxiety → reassurance.</p></div>
+    </div>
+    <div class="loopback">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M20 10a8 8 0 0 0-14-4M4 14a8 8 0 0 0 14 4"/></svg>
+      Loop repeats every cycle — the timeline becomes the asset's heartbeat.
+    </div>
+  </section>
+
+  <!-- SWIMLANES -->
+  <section>
+    <div class="slab">Journeys by role</div>
+    <h2>What each person actually does</h2>
+    <p class="note">The same event ripples across roles. Each lane scrolls →</p>
+
+    <div class="lane" style="--c:var(--owner)">
+      <div class="lane-head"><span class="who">Owner</span><span class="role">Reassurance first</span></div>
+      <div class="lane-steps">
+        <span class="chip">Add unit + docs</span><span class="mini-arrow">→</span>
+        <span class="chip">Pick tier (cadence · IoT)</span><span class="mini-arrow">→</span>
+        <span class="chip">First inspection lands</span><span class="mini-arrow">→</span>
+        <span class="chip">Watch health timeline</span><span class="mini-arrow">→</span>
+        <span class="chip">Approve a repair quote</span><span class="mini-arrow">→</span>
+        <span class="chip">Read the ledger payout</span>
+      </div>
+    </div>
+
+    <div class="lane" style="--c:var(--tenant)">
+      <div class="lane-head"><span class="who">Tenant</span><span class="role">Frictionless</span></div>
+      <div class="lane-steps">
+        <span class="chip">Pay rent</span><span class="mini-arrow">→</span>
+        <span class="chip">Raise issue (2 taps + photo)</span><span class="mini-arrow">→</span>
+        <span class="chip">Track ticket status</span><span class="mini-arrow">→</span>
+        <span class="chip">Consent to inspection</span><span class="mini-arrow">→</span>
+        <span class="chip">Repair done</span>
+      </div>
+    </div>
+
+    <div class="lane" style="--c:var(--agent)">
+      <div class="lane-head"><span class="who">Field Agent</span><span class="role">Speed · offline</span></div>
+      <div class="lane-steps">
+        <span class="chip">Today's route</span><span class="mini-arrow">→</span>
+        <span class="chip">Run checklist (&lt;15 min)</span><span class="mini-arrow">→</span>
+        <span class="chip">Verify issue + quote</span><span class="mini-arrow">→</span>
+        <span class="chip">Verify repair (after-photos)</span><span class="mini-arrow">→</span>
+        <span class="chip">Sync queue</span>
+      </div>
+    </div>
+
+    <div class="lane" style="--c:var(--ops)">
+      <div class="lane-head"><span class="who">Ops / Admin</span><span class="role">Triage · control</span></div>
+      <div class="lane-steps">
+        <span class="chip">Portfolio board (R/A/G)</span><span class="mini-arrow">→</span>
+        <span class="chip">Dispatch agents</span><span class="mini-arrow">→</span>
+        <span class="chip">Resolve disputes</span><span class="mini-arrow">→</span>
+        <span class="chip">Manage vendors</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATE MACHINE -->
+  <section>
+    <div class="slab">The hard part</div>
+    <h2>Maintenance &amp; money — the approval gate</h2>
+    <p class="note">The friction is deliberate: nothing moves the owner's money without a tap. Rent payout for the unit is <b>held</b> the moment a ticket opens.</p>
+    <div class="sm">
+      <div class="srow"><span class="state" style="border-color:var(--tenant); color:var(--tenant)">OPEN</span>
+        <span class="trans"><span class="lbl">tenant raises + payout held</span>→</span>
+        <span class="state">VERIFYING</span>
+        <span class="trans"><span class="lbl">agent: photos + quote</span>→</span>
+        <span class="state gate">NEEDS&nbsp;APPROVAL</span>
+      </div>
+      <div class="vbar"></div>
+      <div class="branch">
+        <div class="srow"><span class="trans"><span class="lbl">owner approves</span>→</span><span class="state">IN&nbsp;REPAIR</span>
+          <span class="trans">→</span><span class="state">VERIFYING&nbsp;FIX</span>
+          <span class="trans"><span class="lbl">after-photos ok · funds released</span>→</span><span class="state term">CLOSED&nbsp;✓</span>
+        </div>
+        <div class="srow"><span class="trans"><span class="lbl">owner rejects</span>→</span><span class="state bad">CLOSED&nbsp;·&nbsp;REJECTED</span></div>
+        <div class="srow"><span class="trans"><span class="lbl">owner asks question</span>→</span><span class="state">NEEDS&nbsp;INFO</span><span class="trans"><span class="lbl">agent replies</span>↺</span></div>
+        <div class="srow"><span class="trans"><span class="lbl">fix fails / contested</span>→</span><span class="state bad">DISPUTED</span><span class="trans"><span class="lbl">Ops resolves w/ photo trail</span>→</span></div>
+      </div>
+    </div>
+    <div class="callout">
+      <b>Guards that keep it honest:</b> can't reach <span class="mono">IN&nbsp;REPAIR</span> without an Approval object · can't close without after-photos · payout stays held until the ticket is terminal · every state change writes a <b>ledger row + timeline card + proof link</b> — no silent money movements.
+    </div>
+  </section>
+
+  <!-- HEALTH -->
+  <section>
+    <div class="slab">Status at a glance</div>
+    <h2>The health state — the object everything pivots on</h2>
+    <p class="note">One rule above all: <b>health never improves without proof.</b> A red never clears because time passed — only because an agent verified it.</p>
+    <div class="health">
+      <div class="hcard"><h4><span class="dot" style="background:var(--ok)"></span>Green — healthy</h4><p>Last inspection clean, no open tickets, sensors nominal. The default the whole product is fighting to maintain.</p></div>
+      <div class="hcard"><h4><span class="dot" style="background:var(--warn)"></span>Amber — attention</h4><p>Minor inspection flag, a sensor warning, or an open ticket. Something to watch, not yet urgent.</p></div>
+      <div class="hcard"><h4><span class="dot" style="background:var(--crit)"></span>Red — critical</h4><p>Leak, structural, pest, squatter, or an unresolved ticket past SLA. Surfaces first on every board.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    Remote Property Management — concept user-journey map · a companion to the case study by Samprati Dash.
+  </footer>
+
+</div>

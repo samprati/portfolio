@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Vacancy Is Not the Problem — Case Study · Samprati Dash</title>
+<style>
+  :root{
+    --ink:#141b26; --body:#2c3644; --muted:#5a6675; --line:#e4e9f0;
+    --blue:#0b5fb8; --cyan:#4fd6ff; --mint:#12b981; --amber:#e8663d;
+    --bg:#fbfcfe; --card:#ffffff;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--body);
+    font-family:'PP Gosha Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    font-size:17px; line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'SF Mono',ui-monospace,'Roboto Mono',Menlo,monospace}
+  a{color:var(--blue)}
+  .wrap{max-width:760px; margin:0 auto; padding:0 24px}
+
+  /* hero */
+  header.hero{
+    background:linear-gradient(160deg,#0b1220,#0b2740 60%,#0b3a5c);
+    color:#eaf3ff; padding:70px 0 54px; position:relative; overflow:hidden;
+  }
+  header.hero::before{
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(60% 80% at 80% 10%, rgba(79,214,255,0.18), transparent 60%);
+  }
+  .eyebrow{position:relative; font-size:12px; letter-spacing:3px; color:var(--cyan); font-weight:700; text-transform:uppercase}
+  h1{position:relative; font-size:clamp(30px,5.4vw,52px); line-height:1.06; margin:14px 0 12px; color:#f4f9ff; letter-spacing:-0.5px}
+  .sub{position:relative; font-size:clamp(16px,2.4vw,20px); color:#bcd2e6; max-width:620px; font-style:italic}
+  .backlink{position:relative; display:inline-block; margin-top:26px; font-size:13px; letter-spacing:1px; color:#bcd2e6; text-decoration:none; border-bottom:1px solid rgba(255,255,255,0.3); padding-bottom:2px}
+
+  /* at a glance */
+  .glance{
+    background:var(--card); border:1px solid var(--line); border-left:4px solid var(--blue);
+    border-radius:12px; padding:22px 24px; margin:-30px auto 44px; position:relative; z-index:2;
+    box-shadow:0 20px 50px rgba(6,20,40,0.1);
+  }
+  .glance h4{margin:0 0 12px; font-size:12px; letter-spacing:2px; color:var(--blue)}
+  .glance p{margin:0 0 9px; font-size:15px; line-height:1.6}
+  .glance p:last-child{margin:0}
+  .glance b{color:var(--ink)}
+
+  section{padding:14px 0}
+  .slabel{font-size:12px; letter-spacing:3px; color:var(--blue); font-weight:700; text-transform:uppercase; margin-top:38px}
+  h2{font-size:clamp(23px,3.4vw,32px); line-height:1.2; color:var(--ink); margin:8px 0 16px; letter-spacing:-0.3px}
+  h3{font-size:19px; color:var(--ink); margin:30px 0 8px}
+  p{margin:0 0 16px}
+  strong{color:var(--ink)}
+  ul{margin:0 0 18px; padding-left:0; list-style:none}
+  ul li{position:relative; padding-left:26px; margin-bottom:10px}
+  ul li::before{content:''; position:absolute; left:6px; top:11px; width:7px; height:7px; border-radius:50%; background:var(--cyan)}
+
+  /* callouts */
+  .callout{border-radius:12px; padding:18px 20px; margin:22px 0; font-size:15.5px; line-height:1.6}
+  .decision{background:#fff4ef; border:1px solid #f6d9cd; border-left:4px solid var(--amber)}
+  .decision .tag{display:block; font-size:11px; letter-spacing:2px; font-weight:700; color:var(--amber); margin-bottom:6px}
+  .assume{background:#eef4fb; border:1px dashed #b8cbe0}
+  .assume .tag{display:block; font-size:11px; letter-spacing:2px; font-weight:700; color:var(--blue); margin-bottom:6px}
+  .why{background:#0f1826; color:#dbe6f2; border-radius:12px; padding:18px 20px; margin:22px 0; font-size:15.5px}
+  .why b{color:#6bffb0}
+
+  /* figure placeholder */
+  .figure{border:1px dashed #c3cedb; background:#f3f6fb; border-radius:12px; padding:22px; margin:26px 0; text-align:center}
+  .figure .ftag{font-family:'SF Mono',monospace; font-size:11px; letter-spacing:2px; color:#9aa8ba}
+  .figure .fcap{display:block; margin-top:8px; font-weight:700; color:var(--ink); font-size:15px}
+  .figure .fwhat{display:block; margin-top:6px; font-size:13.5px; color:var(--muted)}
+
+  /* decision story options */
+  .opts{display:grid; gap:10px; margin:16px 0}
+  .opt{border:1px solid var(--line); border-radius:10px; padding:12px 15px; font-size:14.5px; background:#fff}
+  .opt b{color:var(--ink)}
+  .opt.win{border-color:var(--mint); background:#f0fdf7}
+  .opt.win b{color:var(--mint)}
+
+  footer{border-top:1px solid var(--line); margin-top:50px; padding:34px 0 60px; color:var(--muted); font-size:14px}
+  footer a{font-weight:700}
+
+  @media (max-width:560px){ body{font-size:16px} .wrap{padding:0 18px} }
+</style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <span class="eyebrow">Case Study · PropTech Service Design</span>
+      <h1>The Vacancy Is Not the Problem — It’s the Blind Spot</h1>
+      <p class="sub">Rethinking remote property management by designing for verifiable trust and operational reality, not just transactions.</p>
+      <a class="backlink" href="/">← Back to the flight</a>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="glance">
+      <h4>AT A GLANCE</h4>
+      <p><b>Type:</b> Self-initiated concept — enterprise-grade service design applied to a fragmented PropTech market.</p>
+      <p><b>My role:</b> Sole designer — business-model analysis, service blueprinting, systemic friction mapping, multi-platform UI architecture, and design system.</p>
+      <p><b>A note on honesty:</b> This is a concept grounded in secondary desk research and market analysis of the Indian PropTech sector — not a shipped product. Throughout, I keep three things visibly separate: my design reasoning, the market facts I relied on, and explicitly-flagged assumptions paired with how I’d validate them. I haven’t invented users, quotes, or outcomes.</p>
+    </div>
+
+    <section>
+      <div class="slabel">Section 1 · The Reframe</div>
+      <h2>Everyone is selling the transaction. The real product is proof.</h2>
+      <p>Almost every PropTech app is built on one unexamined assumption: that the problem is <em>facilitating a transaction</em> — collecting rent or finding a tenant. So the default solution is always the same shape: a marketplace or a payment gateway. Build a better funnel, the thinking goes, and you’ve built a better product.</p>
+      <p>That assumption falls apart the moment you look at where the <strong>anxiety</strong> actually concentrates. For the Non-Resident Indian (NRI) and the cross-city investor, rent collection is the easy part. What keeps them up at night is that they cannot <em>see</em> the asset they’re paying to protect. The binding constraint isn’t collecting money — it’s <strong>verifying the health of a property from thousands of miles away.</strong></p>
+      <p>The friction is systemic, and it’s physical before it’s ever digital:</p>
+      <ul>
+        <li><strong>Physical:</strong> the owner can’t inspect an appreciating asset they never stand in front of.</li>
+        <li><strong>Operational:</strong> damp, pests, or an encroaching squatter set in long before anyone notices.</li>
+        <li><strong>Financial:</strong> society dues, repair deductions, NOCs and rent are reconciled across WhatsApp threads and half-remembered spreadsheets.</li>
+      </ul>
+      <p>Look at what these share: the money is not the wound. A payment-first app aimed at a <em>trust</em> problem is the wrong tool pointed at the wrong wall.</p>
+
+      <div class="figure">
+        <span class="ftag">◺ FIGURE 1 ◹</span>
+        <span class="fcap">The friction map — where remote ownership actually breaks</span>
+        <span class="fwhat">A systemic diagram tracing the real drop-off points (undetected degradation, delayed collection, unverified vendors) against the narrow “payment funnel” standard PropTech optimises for.</span>
+      </div>
+
+      <div class="callout decision">
+        <span class="tag">DECISION</span>
+        The first and most consequential decision: refuse the payment-first default, and design the product around <strong>verifiable trust</strong> — visual proof, real-time status, and absolute financial clarity — instead of the transaction.
+      </div>
+
+      <h3>Who this is really for — and why it rewrites the design</h3>
+      <p>On paper the user is “a landlord.” That’s accurate and useless, because it hides the person the product must actually serve: the <strong>distant investor</strong> (NRI / cross-city owner) and the <strong>time-poor professional</strong>. Naming that user decides everything downstream. If I optimised for a local landlord, I’d index on listing speed and payment rails. Because I optimise for a remote, anxious owner, I index on <strong>asynchronous communication, visual evidence, and financial legibility</strong> — every unit of uncertainty removed is a unit of anxiety removed. Same domain, a fundamentally different product, and the divergence flows from one decision about who the user is.</p>
+
+      <div class="callout assume">
+        <span class="tag">HOW I BUILT THIS UNDERSTANDING</span>
+        This rests on desk research and market analysis of Indian PropTech, not on interviews I didn’t run. So I keep the layers honest: <strong>design reasoning</strong> is fully mine; <strong>market facts</strong> are cited as secondary; <strong>assumptions</strong> are flagged wherever they appear, each with a way to test it. Knowing which is which is the job.
+      </div>
+    </section>
+
+    <section>
+      <div class="slabel">Section 2 · The Hard Problems</div>
+      <h2>Three structural frictions worth designing out.</h2>
+      <p>Once you accept that the job is trust, not transactions, the brief changes. It’s no longer “add features” but “find the structural frictions that break remote ownership and design each one out.” I chose three — and the reasoning behind the selection is part of the design.</p>
+
+      <h3>1 · The field visit is the product — and it doesn’t scale</h3>
+      <p>The core value is “eyes on the ground”: sending an agent to a vacant flat and coming back with proof. But a human dispatched frequently is expensive and scales poorly — the very thing that creates the value also threatens the business. The design challenge is a <strong>service blueprint and a Field Agent app</strong> that make an inspection fast and standardised, paired with a subscription model that lets the owner tune cost against frequency.</p>
+
+      <h3>2 · The ledger is fragmented, and “rent received” isn’t enough</h3>
+      <p>A remote owner isn’t tracking a single number. They’re tracking society maintenance, vendor deductions, NOCs, and rent — today, scattered across chats and sheets. The challenge is a <strong>unified financial view</strong> that turns a messy settlement into a clean, step-by-step breakdown the owner can trust at a glance.</p>
+
+      <h3>3 · The handoff of trust — verifying a vendor you’ll never meet</h3>
+      <p>When a repair is needed, the owner can’t vouch for the plumber or the price. Broadcasting every cost creates a different problem: decision fatigue and suspicion. The challenge is a <strong>transparent approval workflow</strong> — geotagged photos and a written quote from the agent, one-tap approval from afar — that creates certainty without turning the owner into a full-time supervisor.</p>
+
+      <div class="callout assume">
+        <span class="tag">ASSUMPTION — AND HOW I’D TEST IT</span>
+        I’m assuming remote owners will pay a <strong>premium</strong> for periodic, visually-verified inspections over basic rent collection. If I could validate one thing before building, it’s this: a pricing-sensitivity survey plus a landing-page smoke test on NRI investor forums, measuring conversion on tiered inspection plans. If that assumption is weak, the product’s centre of gravity shifts — and I’d want to know early.
+      </div>
+    </section>
+
+    <section>
+      <div class="slabel">Section 3 · The Shape of the Answer</div>
+      <h2>Connecting the offline world to the dashboard.</h2>
+      <p>Only with the problems on the table does the solution read as a response rather than a feature list. It’s a <strong>three-app ecosystem</strong>, because the trust is manufactured offline and delivered online:</p>
+      <ul>
+        <li><strong>Field Agent app (internal):</strong> standardised, rapid, offline-tolerant data capture.</li>
+        <li><strong>Tenant portal:</strong> frictionless maintenance requests and automated payments.</li>
+        <li><strong>Owner portal:</strong> the synthesised truth — the health of the asset, chronologically.</li>
+      </ul>
+      <p>The core loop: an automated prompt routes an agent to a property; the agent completes a standardised checklist with geotagged photos; the moment it’s logged, the owner’s dashboard updates with a visual, chronological timeline of the asset’s health. Offline operations become online reassurance.</p>
+      <div class="figure">
+        <span class="ftag">◺ FIGURE 2 ◹</span>
+        <span class="fcap">The service blueprint — offline action → online value</span>
+        <span class="fwhat">Maps the agent’s physical actions to the exact UI changes in the owner’s dashboard, proving the line between internal operations and customer-facing trust.</span>
+      </div>
+    </section>
+
+    <section>
+      <div class="slabel">Section 4 · Decision Stories</div>
+      <h2>The choices — and the trade-offs I accepted.</h2>
+      <p>Design judgment doesn’t live in the screens; it lives in the choices behind them. Each story is a real tension, the options I weighed, and the cost I chose to pay.</p>
+
+      <h3>Decision 1 · Visual timeline over data grid</h3>
+      <p>How do you show property health to an anxious owner half a world away?</p>
+      <div class="opts">
+        <div class="opt"><b>Option A — text checklist:</b> honest but cold; “tasks done” doesn’t feel like proof.</div>
+        <div class="opt"><b>Option B — dense data grid:</b> complete, but it reads as work, not reassurance.</div>
+        <div class="opt win"><b>Option C — image-first chronological feed:</b> photos are proof; a timeline is a heartbeat.</div>
+      </div>
+      <p>I chose C for the individual (B2C) owner.</p>
+      <div class="why"><b>Why over what:</b> I didn’t “add a photo feed.” I chose emotional reassurance over data density for this user — and deliberately reserved the dense grid for the institutional B2B view, where the job is triage, not comfort.</div>
+
+      <h3>Decision 2 · Deliberate friction in the maintenance workflow</h3>
+      <p>Tenants want repairs fast; owners want control of cash; agents need to verify the fix. The naive answer is to auto-approve small repairs for speed.</p>
+      <p>Instead I architected a multi-sided flow: <em>tenant submits ticket → payout held → agent verifies the issue with photos → owner approves the quote → agent verifies the repair → funds released.</em></p>
+      <div class="why"><b>Trade-off accepted:</b> I added friction — the owner <em>must</em> tap approve — rather than optimising for raw speed. For a remote owner, feeling in control of cash flow outranks shaving a day off a repair. Speed is the wrong thing to optimise when the real product is trust.</div>
+
+      <h3>Decision 3 · Tiered visits + smart locks (the unit-economics pivot)</h3>
+      <p>The seductive first concept — “alternate-day physical visits” — is a mathematically broken unit economy. Human visits at that cadence never pay for themselves.</p>
+      <div class="opts">
+        <div class="opt"><b>Option A — keep frequent human visits:</b> maximal reassurance, guaranteed to lose money.</div>
+        <div class="opt"><b>Option B — cut visits entirely, go digital-only:</b> profitable, but abandons the “eyes on the ground” promise.</div>
+        <div class="opt win"><b>Option C — tiered visits + smart-lock / IoT integration points:</b> monthly human inspections, sensor coverage in between.</div>
+      </div>
+      <p>I pivoted to C.</p>
+      <div class="why"><b>Trade-off accepted:</b> it pushes some upfront IoT hardware cost onto the owner — and it’s more complex to explain than “we visit all the time.” I accepted that because it’s the only version that stays honest about the business surviving. A service that can’t afford to keep its promise isn’t a kindness; it’s a countdown.</div>
+    </section>
+
+    <section>
+      <div class="slabel">Section 5 · Beyond the Happy Path</div>
+      <h2>The scenarios real life throws.</h2>
+      <p>A management product that only works on a calm, occupied, well-connected day isn’t finished. A few of the harder cases I designed for:</p>
+      <ul>
+        <li><strong>Institutional scale (B2B):</strong> a landlord holding 50 vacant units needs triage, not a feed — colour-coded health (green/amber/red), filterable map views, and inspection-compliance tracking across the portfolio.</li>
+        <li><strong>The agent with no signal:</strong> inspections happen in basements and newly-built, unoccupied towers. The Field Agent app caches offline and syncs when it can — the capture can never depend on a good connection.</li>
+        <li><strong>The disputed repair:</strong> when owner and tenant disagree on a cost, the geotagged photo trail becomes the neutral record — the product takes no side, it just shows the evidence.</li>
+        <li><strong>The tenant’s privacy:</strong> “eyes on the ground” must never feel like surveillance of an occupied home. Inspections of tenanted units are scheduled, consented, and scoped — the owner sees the asset’s condition, not the tenant’s life.</li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="slabel">Section 6 · Craft &amp; System</div>
+      <h2>Enterprise mechanics under a calm surface.</h2>
+      <p>A product this multi-sided is a design-system achievement, not a styling one — and this is the discipline I bring from years leading enterprise design systems: build the library once, reuse it everywhere, so consistency is structural rather than manual.</p>
+      <ul>
+        <li><strong>One system, three surfaces:</strong> a single component library serves Consumer Mobile, Agent Mobile, and Enterprise Web from one source of truth — no triplicated front-end.</li>
+        <li><strong>Role-based components:</strong> a single “Property Status Card” renders financial yield to the owner, but only maintenance status to the tenant — the logic lives in the component, not in three forks.</li>
+        <li><strong>Accessibility as a baseline:</strong> the B2C surfaces target WCAG 2.2 — high contrast, generous type, large touch targets — because some absentee owners are elderly and acting under stress.</li>
+      </ul>
+      <div class="figure">
+        <span class="ftag">◺ FIGURE 3 ◹</span>
+        <span class="fcap">The unified PropTech design system — tokens &amp; components</span>
+        <span class="fwhat">The constrained type scale, semantic colour tokens, and the parameterised “status card” in all its role- and state-variants across mobile and desktop.</span>
+      </div>
+    </section>
+
+    <section>
+      <div class="slabel">Section 7 · Validation &amp; Reflection</div>
+      <h2>What I’d test, and what I learned.</h2>
+      <p>If this moved toward production, three hypotheses carry the whole architecture:</p>
+      <ul>
+        <li><strong>Unit economics:</strong> can an agent, using route-mapping and fast-input tools, complete a standard inspection in under ~15 minutes — the threshold that keeps the model profitable?</li>
+        <li><strong>Visual reassurance:</strong> do remote owners report a measurable drop in anxiety with the image-driven feed versus an emailed PDF report?</li>
+        <li><strong>B2B scalability:</strong> can the enterprise dashboard surface a neglected unit inside a 50+ portfolio without overwhelming the user?</li>
+      </ul>
+      <p>The most useful thing I did here was refuse the obvious solution. “Build a payment app” would have produced something competent, crowded, and beside the point. Spending the effort to ask <em>why remote ownership actually fails</em> — and being willing to pivot the service model when the unit economics didn’t hold — is what turned this from a feature set into a point of view. The honest limit is equally clear: without primary research this is a well-reasoned hypothesis, not a validated product. I’ve tried to be precise about which is which — because knowing the difference is the job.</p>
+      <p style="color:var(--muted); font-style:italic">A closing note: I built this to be scrutinised. If you want to test how I think, ask me why I rejected an option or push on a trade-off I accepted — those are the conversations this document is designed to start.</p>
+    </section>
+  </div>
+
+  <footer>
+    <div class="wrap">
+      Samprati Dash — Lead Product Designer · <a href="/">Back to the portfolio</a>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
+import ComingSoon from './components/ComingSoon.jsx'
 import LoadingScreen from './components/LoadingScreen.jsx'
 import Scene3D from './components/Scene3D.jsx'
 import FlightHUD from './components/FlightHUD.jsx'
@@ -18,7 +19,17 @@ const END_T = CONTENT_PROGRESS[N - 1]
 const ROTATE_T = 1 / SEG
 const FLARE_T = (SEG - 1) / SEG
 
+// LAUNCH SWITCH — while the real site is being built, show the coming-soon
+// splash. Set this to false to reveal the full 3D portfolio.
+const SHOW_COMING_SOON = true
+
 function App() {
+  if (SHOW_COMING_SOON) return <ComingSoon />
+
+  return <Portfolio />
+}
+
+function Portfolio() {
   const [loaded, setLoaded] = useState(false)
   const progressRef = useRef(0)
   // scripted reverse maneuver: { active, id, from:[x,y,z], to:[x,y,z], phase }
